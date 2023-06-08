@@ -1,12 +1,12 @@
 package cs3500.cs3500.pa03.Controller;
 
 import cs3500.cs3500.pa03.Model.AIPlayer;
+import cs3500.cs3500.pa03.Model.AbstractPlayer;
 import cs3500.cs3500.pa03.Model.Coord;
 import cs3500.cs3500.pa03.Model.GameOutcomeChecker;
 import cs3500.cs3500.pa03.Model.GameResult;
 import cs3500.cs3500.pa03.Model.SalvoPlayer;
 import cs3500.cs3500.pa03.Model.Ship;
-import cs3500.cs3500.pa03.Model.SunkenShips;
 import cs3500.cs3500.pa03.View.DrawBoard;
 import cs3500.cs3500.pa03.View.UserQuestions;
 import java.io.IOException;
@@ -28,7 +28,7 @@ public class SalvoGame implements Controller {
   public SalvoGame(Readable input, Appendable output) {
     this.input = Objects.requireNonNull(input);
     this.output = Objects.requireNonNull(output);
-    this.scanner = scanner;
+    this.scanner = new Scanner(System.in);
   }
 
   /**
@@ -50,13 +50,12 @@ public class SalvoGame implements Controller {
       DesiredFleetSize fleet_size = new DesiredFleetSize(scanner, input);
       Map<ShipType, Integer> fleets = fleet_size.readFleet(lesserValue);
 
-      // initialize the players
-      SalvoPlayer player1 = new SalvoPlayer();
-      AIPlayer player2 = new AIPlayer();
 
       // setup the ship placement
-      List<Ship> player1_ships = player1.setup(height, width, fleets);
-      List<Ship> player2_ships = player2.setup(height, width, fleets);
+      AbstractPlayer player1 = new SalvoPlayer(height, width, fleets);
+      AbstractPlayer player2 = new AIPlayer(height, width, fleets);
+      List<Ship> player1_ships = player1.getShips();
+      List<Ship> player2_ships = player2.getShips();
 
       // mutate the player board field
       List<Coord> empty = new ArrayList<>();
@@ -71,7 +70,7 @@ public class SalvoGame implements Controller {
       while (game_state.equals(GameResult.IN_PROGRESS)) {
         // display the initial manuel player board and opponent data
         DrawBoard board = new DrawBoard();
-        int shots = SunkenShips.numberOfShots(player1.getPlayerBoard());
+        int shots = AbstractPlayer.count(player1_ships, player1.getPlayerBoard());
         board.draw(output, player1.getPlayerBoard(), player1.getOpponentBoard());
         UserQuestions.displayShots(output, shots);
         // attack

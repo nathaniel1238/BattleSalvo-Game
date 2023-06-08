@@ -11,10 +11,12 @@ import java.util.Map;
 public abstract class AbstractPlayer implements Player {
   protected List<List<String>> player_board;
   protected List<List<String>> opp_board;
+  protected List<Ship> ships;
 
-  public AbstractPlayer() {
+  public AbstractPlayer(int height, int width, Map<ShipType, Integer> specifications) {
     this.player_board = new ArrayList<>();
     this.opp_board = new ArrayList<>();
+    this.ships = setup(height, width, specifications);
   }
 
   @Override
@@ -232,6 +234,36 @@ public abstract class AbstractPlayer implements Player {
 
   public List<List<String>> getOpponentBoard() {
     return opp_board;
+  }
+  public static int count(List<Ship> ships, List<List<String>> board) {
+    int fleet_size = ships.size();
+    for (Ship ship: ships) {
+      int count = sunked_count(ship.getCoord(), board);
+      if (count == ship.getCoord().size()) {
+        fleet_size--;
+      }
+    }
+    return fleet_size;
+  }
+
+  private static int sunked_count(List<Coord> ship_coord, List<List<String>> board) {
+    int hit_count = 0;
+    for (Coord c: ship_coord) {
+      int x = c.getX();
+      int y = c.getY();
+      for (int i = 0; i < board.size(); i++) {
+        for (int j = 0; j < board.get(0).size(); j++) {
+          if (i == x && y == j && board.get(i).get(j).equals("X")) {
+            hit_count++;
+          }
+        }
+      }
+    }
+    return hit_count;
+  }
+
+  public List<Ship> getShips() {
+    return this.ships;
   }
 
 }

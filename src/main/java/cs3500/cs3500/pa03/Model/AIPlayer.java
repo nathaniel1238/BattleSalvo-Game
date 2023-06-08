@@ -1,12 +1,15 @@
 package cs3500.cs3500.pa03.Model;
 
+import cs3500.cs3500.pa03.Controller.ShipType;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.Random;
+import java.util.Scanner;
 
 public class AIPlayer extends AbstractPlayer {
-  public AIPlayer() {
-    super();
+  public AIPlayer(int height, int width, Map<ShipType, Integer> specifications) {
+    super(height, width, specifications);
   }
 
   /**
@@ -17,7 +20,7 @@ public class AIPlayer extends AbstractPlayer {
   public List<Coord> takeShots() {
     List<Coord> availableShots = getAvailableShots();
     List<Coord> shotsTaken = new ArrayList<>();
-    int shotsRemaining = SunkenShips.numberOfShots(this.player_board);
+    int shotsRemaining = count(ships, player_board);
 
     // Generate a random shot
     Random random = new Random();

@@ -22,22 +22,28 @@ public class DesiredSize {
    * @return an array of integers with the height and the width inside
    */
   public List<Integer> readSize() {
-    Scanner scanner = new Scanner(read);
-    String input = scanner.nextLine();
-    String[] parts = input.split(" ");
-    List<String> partsList = new ArrayList<>(Arrays.asList(parts));
     List<Integer> dimensions = new ArrayList<>();
 
-    // the height and the width of the board
-    dimensions.add(Integer.parseInt(partsList.get(0)));
-    dimensions.add(Integer.parseInt(partsList.get(1)));
+    boolean validInput = false;
+    while (!validInput) {
+      try {
+        scanner = new Scanner(read);
+        int height = scanner.nextInt();
+        int width = scanner.nextInt();
 
-    if (dimensions.get(0) >= 6 && dimensions.get(0) <= 15 &&
-        dimensions.get(1) >= 6 && dimensions.get(1) <= 15) {
-      return dimensions;
-    } else {
-      throw new IllegalArgumentException("Please enter values within the given range.");
+        if (height >= 6 && height <= 15 && width >= 6 && width <= 15) {
+          dimensions.add(height);
+          dimensions.add(width);
+          validInput = true; // Input is valid, exit the loop
+        } else {
+          System.out.println("Please enter values within the range [6, 15].");
+        }
+      } catch (Exception e) {
+        System.out.println("Invalid input. Please try again.");
+      }
     }
+    return dimensions;
   }
+
 }
 
