@@ -29,7 +29,7 @@ public class SalvoPlayer extends AbstractPlayer {
     List<Coord> coordinates = new ArrayList<>();
 
     try {
-      for (int i = 0; i < count(ships, player_board); i++) {
+      for (int i = 0; i < AbstractPlayer.count(ships, player_board); i++) {
         int xvalue = scanner.nextInt();
         int yvalue = scanner.nextInt();
         boolean validInput = true;

@@ -98,11 +98,11 @@ public abstract class AbstractPlayer implements Player {
   @Override
   public void endGame(GameResult result, String reason) {
     if (result.equals(GameResult.WIN)) {
-      System.out.println(reason + "a win! You hit all their ships before they hit all yours!");
+      System.out.println(reason + " a win! You hit all their ships before they hit all yours!");
     } else if (result.equals(GameResult.LOSE)) {
-      System.out.println(reason + "a loss! They hit all your ships before you hit all theirs!");
+      System.out.println(reason + " a loss! They hit all your ships before you hit all theirs!");
     } else {
-      System.out.println(reason + "a draw! Both players hit all the remaining ships at the same time!");
+      System.out.println(reason + " a draw! Both players hit all the remaining ships at the same time!");
     }
   }
 
@@ -130,21 +130,17 @@ public abstract class AbstractPlayer implements Player {
    */
   private void markHitsOnBoard(List<Coord> hits, List<Coord> shots) {
     for (Coord shot : shots) {
-      int x = shot.getX();
-      int y = shot.getY();
       boolean isHit = false;
-
       for (Coord hit : hits) {
-        if (hit.getX() == x && hit.getY() == y) {
+        if (hit.getX() == shot.getX() && hit.getY() == shot.getY()) {
           isHit = true;
           break;
         }
       }
-
-      if (isHit) {
-        player_board.get(y).set(x, "X");  // Mark hits as "X"
+      if (!isHit && !player_board.get(shot.getY()).get(shot.getX()).equals("X")) {
+        player_board.get(shot.getY()).set(shot.getX(), "O");
       } else {
-        player_board.get(y).set(x, "O");  // Mark misses as "O"
+        player_board.get(shot.getY()).set(shot.getX(), "X");
       }
     }
   }
@@ -187,8 +183,6 @@ public abstract class AbstractPlayer implements Player {
    * @param hits reported damage
    */
   private void markMissOnOppBoard(List<Coord> hits, List<Coord> shots) {
-    List<Coord> missedShots = new ArrayList<>();
-
     for (Coord shot : shots) {
       boolean isHit = false;
       for (Coord hit : hits) {
@@ -197,15 +191,9 @@ public abstract class AbstractPlayer implements Player {
           break;
         }
       }
-      if (!isHit) {
-        missedShots.add(shot);
+      if (!isHit && !opp_board.get(shot.getY()).get(shot.getX()).equals("X")) {
+        opp_board.get(shot.getY()).set(shot.getX(), "O");
       }
-    }
-
-    for (Coord shot : missedShots) {
-      int x = shot.getX();
-      int y = shot.getY();
-      opp_board.get(y).set(x, "O");  // Mark misses as "O"
     }
   }
 
@@ -251,16 +239,13 @@ public abstract class AbstractPlayer implements Player {
     for (Coord c: ship_coord) {
       int x = c.getX();
       int y = c.getY();
-      for (int i = 0; i < board.size(); i++) {
-        for (int j = 0; j < board.get(0).size(); j++) {
-          if (i == x && y == j && board.get(i).get(j).equals("X")) {
-            hit_count++;
-          }
-        }
+      if (board.get(y).get(x).equals("X")) {
+        hit_count++;
       }
     }
     return hit_count;
   }
+
 
   public List<Ship> getShips() {
     return this.ships;

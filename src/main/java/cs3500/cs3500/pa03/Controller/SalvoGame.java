@@ -76,6 +76,11 @@ public class SalvoGame implements Controller {
         // attack
         List<Coord> user_shots = player1.takeShots();
         List<Coord> ai_shots = player2.takeShots();
+        for (Coord c: ai_shots) {
+          System.out.println(c.toString());
+        }
+
+        System.out.println();
         List<Coord> user_damaged = player1.reportDamage(ai_shots);
         List<Coord> ai_damaged = player2.reportDamage(user_shots);
         player1.successfulHits(ai_damaged);
