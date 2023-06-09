@@ -1,4 +1,9 @@
 package cs3500.pa04;
 
-public class Fleet {
+import com.fasterxml.jackson.annotation.JsonProperty;
+import java.util.List;
+
+public record Fleet (
+    @JsonProperty("fleet") List<Ship> ships) {
+
 }

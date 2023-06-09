@@ -1,4 +1,7 @@
 package cs3500.pa04;
 
-public record Coord() {
+import com.fasterxml.jackson.annotation.JsonProperty;
+
+public record Coord(
+    @JsonProperty("coord") int x, int y) {
 }
