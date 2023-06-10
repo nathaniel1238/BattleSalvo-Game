@@ -3,22 +3,11 @@ package cs3500.pa04;
 import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.node.ArrayNode;
-import com.fasterxml.jackson.databind.node.ObjectNode;
-import cs3500.pa03.model.Coord;
-import cs3500.pa03.model.Ship;
-import cs3500.pa03.model.ShipType;
-import cs3500.pa03.model.Player;
-import cs3500.pa03.model.GameResult;
-
+import cs3500.cs3500.pa03.Model.Player;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.PrintStream;
 import java.net.Socket;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 
 public class ProxyController {
   private final Socket server;
@@ -49,7 +38,6 @@ public class ProxyController {
       JsonParser parser = this.mapper.getFactory().createParser(this.in);
 
       while (!this.server.isClosed()) {
-        MessageJson message = mapper.readTree(parser).traverse();
         delegate(message);
       }
     } catch (IOException e) {
@@ -58,122 +46,59 @@ public class ProxyController {
   }
 
   private void delegate(MessageJson message) {
-    String command = message.getCommand();
-    JsonNode arguments = message.getArguments();
+    String name = message.messageName();
+    JsonNode arguments = message.arguments();
 
-    switch (command) {
-      case "join":
-        handleJoin(arguments);
-        break;
-      case "setup":
-        handleSetUp(arguments);
-        break;
-      case "win":
-        handleWin(arguments);
-        break;
-      case "damage":
-        handleDamage(arguments);
-        break;
-      case "shots":
-        handleShots(arguments);
-        break;
-      case "successful":
-        handleSuccessful(arguments);
-        break;
-      default:
-        System.out.println("Unknown command: " + command);
+    if ("join".equals(name)) {
+      handleJoin(arguments);
+    } else if ("win".equals(name)) {
+      handleWin(arguments);
+    } else if ("take-shots".equals(name)) {
+      handleShots(arguments);
+    } else if ("report-damage".equals(name)) {
+      handleWin(arguments);
+    } else if ("successful-hits".equals(name)) {
+      handleWin(arguments);
+    }
+    else {
+      throw new IllegalStateException("Invalid message name");
     }
   }
 
   private void handleJoin(JsonNode arguments) {
-    String playerName = arguments.get("playerName").asText();
-    player.name(playerName);
-    sendResponse("join", VOID_RESPONSE);
+    HintJson guessArgs = this.mapper.convertValue(arguments, HintJson.class);
+
+    int guess = getPlayerGuess(guessArgs);
+
+    GuessJson response = new GuessJson(guess);
+    JsonNode jsonResponse = JsonUtils.serializeRecord(response);
+    this.out.println(jsonResponse);
   }
 
   private void handleSetUp(JsonNode arguments) {
-    int height = arguments.get("height").asInt();
-    int width = arguments.get("width").asInt();
-    Map<ShipType, Integer> shipSpecifications = parseShipSpecifications(arguments.get("shipSpecifications"));
-    List<Ship> shipPlacements = player.setup(height, width, shipSpecifications);
-    JsonNode response = createShipPlacementsResponse(shipPlacements);
-    sendResponse("setup", response);
+    Fleet fleet = fleet.arguments;
+
   }
 
+
   private void handleWin(JsonNode arguments) {
-    String playerName = arguments.get("playerName").asText();
-    String reason = arguments.get("reason").asText();
-    player.endGame(GameResult.WIN, reason);
-    sendResponse("win", VOID_RESPONSE);
+    WinJson winJson = this.mapper.convertValue(arguments, WinJson.class);
+
+    this.player.win(winJson.isWinner());
+
+    this.out.println(VOID_RESPONSE);
   }
 
   private void handleDamage(JsonNode arguments) {
-    List<Coord> opponentShots = parseCoordList(arguments.get("opponentShots"));
-    List<Coord> hits = player.reportDamage(opponentShots);
-    JsonNode response = createCoordListResponse(hits);
-    sendResponse("damage", response);
+
   }
 
   private void handleShots(JsonNode arguments) {
-    int numShots = arguments.get("numShots").asInt();
-    List<Coord> shots = player.takeShots(numShots);
-    JsonNode response = createCoordListResponse(shots);
-    sendResponse("shots", response);
+
   }
 
   private void handleSuccessful(JsonNode arguments) {
-    List<Coord> shotsThatHitOpponentShips = parseCoordList(arguments.get("shotsThatHitOpponentShips"));
-    player.successfulHits(shotsThatHitOpponentShips);
-    sendResponse("successful", VOID_RESPONSE);
+
   }
 
-  private Map<ShipType, Integer> parseShipSpecifications(JsonNode node) {
-    Map<ShipType, Integer> shipSpecifications = new HashMap<>();
-    for (JsonNode entry : node) {
-      ShipType shipType = ShipType.valueOf(entry.get("shipType").asText().toUpperCase());
-      int count = entry.get("count").asInt();
-      shipSpecifications.put(shipType, count);
-    }
-    return shipSpecifications;
-  }
-
-  private List<Coord> parseCoordList(JsonNode node) {
-    List<Coord> coordList = new ArrayList<>();
-    for (JsonNode entry : node) {
-      int x = entry.get("x").asInt();
-      int y = entry.get("y").asInt();
-      Coord coord = new Coord(x, y);
-      coordList.add(coord);
-    }
-    return coordList;
-  }
-
-  private JsonNode createShipPlacementsResponse(List<Ship> shipPlacements) {
-    ArrayNode arrayNode = mapper.createArrayNode();
-    for (Ship ship : shipPlacements) {
-      ObjectNode shipNode = mapper.createObjectNode();
-      shipNode.put("shipType", ship.getShipType().toString().toLowerCase());
-      shipNode.put("size", ship.getSize());
-      arrayNode.add(shipNode);
-    }
-    return arrayNode;
-  }
-
-  private JsonNode createCoordListResponse(List<Coord> coordList) {
-    ArrayNode arrayNode = mapper.createArrayNode();
-    for (Coord coord : coordList) {
-      ObjectNode coordNode = mapper.createObjectNode();
-      coordNode.put("x", coord.getX());
-      coordNode.put("y", coord.getY());
-      arrayNode.add(coordNode);
-    }
-    return arrayNode;
-  }
-
-  private void sendResponse(String command, JsonNode response) {
-    ObjectNode responseNode = mapper.createObjectNode();
-    responseNode.put("command", command);
-    responseNode.set("response", response);
-    out.println(responseNode.toString());
-  }
 }

@@ -91,8 +91,7 @@ public class SalvoGame implements Controller {
         // check the outcome
         game_state = GameOutcomeChecker.checkGameOutcome(player1.getPlayerBoard(), player2.getPlayerBoard());
       }
-
-      player1.endGame(game_state, "Your final result is ");
+      player1.endGame(game_state, "Your final result is");
     } catch (IOException e) {
       throw new RuntimeException(e);
     }
