@@ -53,7 +53,14 @@ public class ProxyController {
       handleJoin(arguments);
     } else if ("win".equals(name)) {
       handleWin(arguments);
-    } else {
+    } else if ("take-shots".equals(name)) {
+      handleShots(arguments);
+    } else if ("report-damage".equals(name)) {
+      handleWin(arguments);
+    } else if ("successful-hits".equals(name)) {
+      handleWin(arguments);
+    }
+    else {
       throw new IllegalStateException("Invalid message name");
     }
   }
