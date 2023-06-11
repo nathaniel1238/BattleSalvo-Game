@@ -1,6 +1,9 @@
 package cs3500.cs3500.pa03.Model;
 
-import cs3500.cs3500.pa03.Controller.ShipType;
+import cs3500.pa04.Coord;
+import cs3500.pa04.GameResult;
+import cs3500.pa04.Ship;
+import cs3500.pa04.ShipType;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
