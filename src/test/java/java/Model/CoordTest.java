@@ -2,6 +2,7 @@ package Model;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
+import cs3500.cs3500.pa03.Model.Coord;
 import org.junit.jupiter.api.Test;
 
 class CoordTest {

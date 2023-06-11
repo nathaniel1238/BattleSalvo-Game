@@ -1,5 +1,6 @@
 package Model;
 
+import cs3500.cs3500.pa03.Model.Direction;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;

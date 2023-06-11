@@ -3,6 +3,7 @@ package Model;
 import cs3500.cs3500.pa03.Model.Coord;
 import cs3500.cs3500.pa03.Controller.ShipType;
 import cs3500.cs3500.pa03.Model.Direction;
+import cs3500.cs3500.pa03.Model.RandomCoordinates;
 import org.junit.jupiter.api.Test;
 
 import java.util.List;

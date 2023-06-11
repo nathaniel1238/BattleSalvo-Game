@@ -29,7 +29,7 @@ public class UserQuestions {
    */
   public static void displayFleet(Appendable output, int max) throws IOException {
     output.append("Please enter a valid number of ships for each type in the order[Carrier, BattleShip, Destroyer, Submarine]").append(System.lineSeparator());
-    output.append("NOTE: Each shiptype has to have atleast one value and may not exceed the size ").append(String.valueOf(max)).append(System.lineSeparator());
+    output.append("NOTE: Each shiptype has to have at least one value and may not exceed the size ").append(String.valueOf(max)).append(System.lineSeparator());
   }
 
   /**
