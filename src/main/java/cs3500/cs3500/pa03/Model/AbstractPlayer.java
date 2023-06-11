@@ -40,19 +40,46 @@ public abstract class AbstractPlayer implements Player {
   @Override
   public List<Ship> setup(int height, int width, Map<ShipType, Integer> specifications) {
     List<Ship> init = new ArrayList<>();
-    for (Map.Entry<ShipType, Integer> entry: specifications.entrySet()) {
+    for (Map.Entry<ShipType, Integer> entry : specifications.entrySet()) {
       ShipType shipType = entry.getKey();
       Integer count = entry.getValue();
       for (int i = 0; i < count; i++) {
         Direction direction = Direction.randomDirection();
         List<Coord> ship_coordinates = RandomCoordinates.generateShipCoord(height, width, shipType, direction);
         List<Coord> filtered = UpdateCoordinates.updateCoord(height, width, shipType, init, ship_coordinates);
-        Ship ship = new Ship(shipType, filtered);
+        Ship ship;
+        if (isVertical(filtered)) {
+          ship = new Ship(shipType, filtered, Direction.VERTICAL);
+        } else {
+          ship = new Ship(shipType, filtered, Direction.HORIZONTAL);
+        }
         init.add(ship);
       }
     }
     return init;
   }
+
+
+  /**
+   * Checks if the given list of coordinates represents a vertical arrangement.
+   *
+   * @param coords The list of coordinates to check.
+   * @return True if the coordinates are vertically arranged, false otherwise.
+   */
+  private boolean isVertical(List<Coord> coords) {
+    if (coords != null && coords.size() > 1) {
+      int firstX = coords.get(0).getX();
+      for (Coord coord : coords) {
+        if (coord.getX() != firstX) {
+          return false;
+        }
+      }
+      return true;
+    }
+    return false;
+  }
+
+
 
   /**
    * Given the list of shots the opponent has fired on this player's board, report which
