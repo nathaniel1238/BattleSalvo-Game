@@ -4,7 +4,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import java.util.List;
 
 public record Volley(
-  @JsonProperty("volley") List<Coord> coordinates) {
+  @JsonProperty("volley") List<CoordJson> coordinates) {
 
   }
 

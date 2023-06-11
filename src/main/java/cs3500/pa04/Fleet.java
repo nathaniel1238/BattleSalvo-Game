@@ -4,6 +4,6 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import java.util.List;
 
 public record Fleet (
-    @JsonProperty("fleet") List<Ship> ships) {
+    @JsonProperty("fleet") List<ShipJson> ships) {
 
 }

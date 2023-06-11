@@ -2,13 +2,14 @@ package cs3500.cs3500.pa03.Controller;
 
 import cs3500.cs3500.pa03.Model.AIPlayer;
 import cs3500.cs3500.pa03.Model.AbstractPlayer;
-import cs3500.cs3500.pa03.Model.Coord;
+import cs3500.pa04.Coord;
 import cs3500.cs3500.pa03.Model.GameOutcomeChecker;
-import cs3500.cs3500.pa03.Model.GameResult;
+import cs3500.pa04.GameResult;
 import cs3500.cs3500.pa03.Model.SalvoPlayer;
-import cs3500.cs3500.pa03.Model.Ship;
+import cs3500.pa04.Ship;
 import cs3500.cs3500.pa03.View.DrawBoard;
 import cs3500.cs3500.pa03.View.UserQuestions;
+import cs3500.pa04.ShipType;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;

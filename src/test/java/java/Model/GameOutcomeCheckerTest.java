@@ -1,9 +1,7 @@
 package Model;
 
-import static org.junit.jupiter.api.Assertions.*;
-
 import cs3500.cs3500.pa03.Model.GameOutcomeChecker;
-import cs3500.cs3500.pa03.Model.GameResult;
+import cs3500.pa04.GameResult;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;

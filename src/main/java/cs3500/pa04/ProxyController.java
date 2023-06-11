@@ -5,6 +5,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
+import cs3500.cs3500.pa03.Model.AbstractPlayer;
 import cs3500.pa03.model.Coord;
 import cs3500.pa03.model.Ship;
 import cs3500.pa03.model.ShipType;
@@ -24,7 +25,7 @@ public class ProxyController {
   private final Socket server;
   private final InputStream in;
   private final PrintStream out;
-  private final Player player;
+  private final AbstractPlayer player;
   private final ObjectMapper mapper = new ObjectMapper();
 
   private static final JsonNode VOID_RESPONSE =
@@ -37,7 +38,7 @@ public class ProxyController {
    * @param player the instance of the player
    * @throws IOException if
    */
-  public ProxyController(Socket server, Player player) throws IOException {
+  public ProxyController(Socket server, AbstractPlayer player) throws IOException {
     this.server = server;
     this.in = server.getInputStream();
     this.out = new PrintStream(server.getOutputStream());
@@ -152,8 +153,8 @@ public class ProxyController {
     ArrayNode arrayNode = mapper.createArrayNode();
     for (Ship ship : shipPlacements) {
       ObjectNode shipNode = mapper.createObjectNode();
-      shipNode.put("shipType", ship.getShipType().toString().toLowerCase());
-      shipNode.put("size", ship.getSize());
+      shipNode.put("shipType", ship.getType().toString().toLowerCase());
+      shipNode.put("size", ship.getCoord().size());
       arrayNode.add(shipNode);
     }
     return arrayNode;

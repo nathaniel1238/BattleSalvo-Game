@@ -1,6 +1,6 @@
 //package Model;
 //
-//import cs3500.cs3500.pa03.Model.Coord;
+//import cs3500.pa04.Coord;
 //import org.junit.jupiter.api.Test;
 //import java.util.ArrayList;
 //import java.util.List;

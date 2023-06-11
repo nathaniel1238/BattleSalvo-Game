@@ -1,4 +1,4 @@
-package cs3500.cs3500.pa03.Model;
+package cs3500.pa04;
 
 /**
  * represents the final result of the game as it can end in

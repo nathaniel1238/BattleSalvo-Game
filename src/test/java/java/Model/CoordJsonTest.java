@@ -1,11 +1,11 @@
-package Model;
+package java.Model;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-import cs3500.cs3500.pa03.Model.Coord;
+import cs3500.pa04.Coord;
 import org.junit.jupiter.api.Test;
 
-class CoordTest {
+class CoordJsonTest {
 
   @Test
   void getX() {

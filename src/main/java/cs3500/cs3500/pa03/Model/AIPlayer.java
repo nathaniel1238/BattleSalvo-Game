@@ -1,11 +1,11 @@
 package cs3500.cs3500.pa03.Model;
 
-import cs3500.cs3500.pa03.Controller.ShipType;
+import cs3500.pa04.Coord;
+import cs3500.pa04.ShipType;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
-import java.util.Scanner;
 
 public class AIPlayer extends AbstractPlayer {
   private List<Coord> shotAt; // Declare the availableShots list as an instance variable
