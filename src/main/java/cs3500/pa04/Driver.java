@@ -18,20 +18,20 @@ public class Driver {
    * @param args - no command line args required
    */
   public static void main(String[] args) throws IOException {
-//    try {
-//      AbstractPlayer ai = new AIPlayer();
-//      Socket socket = new Socket("0.0.0.0", 35001);
-//      Appendable output = System.out;
-//      SalvoGame game = new SalvoGame(new InputStreamReader(System.in), output);
-//      ProxyController controller = new ProxyController(socket, player);
-//      controller.run();
-//    } catch (IOException e) {
-//      e.printStackTrace();
-//    }
-    Appendable output = System.out;
-    Scanner scanner = new Scanner(System.in);
-
-    SalvoGame game = new SalvoGame(new InputStreamReader(System.in), output);
-    game.run();
+    try {
+      AbstractPlayer ai = new AIPlayer();
+      Socket socket = new Socket("0.0.0.0", 35001);
+      Appendable output = System.out;
+      SalvoGame game = new SalvoGame(new InputStreamReader(System.in), output);
+      ProxyController controller = new ProxyController(socket, ai);
+      controller.run();
+    } catch (IOException e) {
+      e.printStackTrace();
+    }
+//    Appendable output = System.out;
+//    Scanner scanner = new Scanner(System.in);
+//
+//    SalvoGame game = new SalvoGame(new InputStreamReader(System.in), output);
+//    game.run();
   }
 }
