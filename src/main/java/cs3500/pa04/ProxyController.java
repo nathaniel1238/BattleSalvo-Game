@@ -30,7 +30,7 @@ public class ProxyController {
    * Construct an instance of a ProxyPlayer.
    *
    * @param server the socket connection to the server
-   * @param player the instance of the player
+   * @param player the instance of the player.
    * @throws IOException if
    */
   public ProxyController(Socket server, AbstractPlayer player) throws IOException {
