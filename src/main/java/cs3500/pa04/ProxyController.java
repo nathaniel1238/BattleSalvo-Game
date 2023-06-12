@@ -120,14 +120,16 @@ public class ProxyController {
     List<Coord> hits = player.reportDamage(opponentShots);
     Volley damaged = new Volley(hits);
     JsonNode response = JsonUtils.serializeRecord(damaged);
-    out.println(response);
+    MessageJson message = new MessageJson("report-damaged", response);
+    out.println(message);
   }
 
   private void handleShots() {
     List<Coord> shots = player.takeShots();
     Volley shot = new Volley(shots);
     JsonNode response = JsonUtils.serializeRecord(shot);
-    out.println(response);
+    MessageJson message = new MessageJson("take-shots", response);
+    out.println(message);
   }
 
   private void handleSuccessful(JsonNode arguments) {
@@ -137,7 +139,9 @@ public class ProxyController {
       successful_shots.add(shot);
     }
     player.successfulHits(successful_shots);
-    out.println();
+    MessageJson message = new MessageJson("successful-hits", mapper.createObjectNode());
+    JsonNode jsonResponse = JsonUtils.serializeRecord(message);
+    this.out.println(jsonResponse);
   }
 
   private Map<ShipType, Integer> parseShipSpecifications(JsonNode node) {
