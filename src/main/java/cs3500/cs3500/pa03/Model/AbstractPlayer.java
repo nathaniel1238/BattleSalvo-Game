@@ -14,14 +14,14 @@ import java.util.Map;
 public abstract class AbstractPlayer implements Player {
   protected List<List<String>> player_board;
   protected List<List<String>> opp_board;
-  protected List<Ship> ships;
   protected String name;
+  protected List<Ship> ships;
 
-  public AbstractPlayer(int height, int width, Map<ShipType, Integer> specifications) {
+  public AbstractPlayer() {
     this.player_board = new ArrayList<>();
     this.opp_board = new ArrayList<>();
-    this.ships = setup(height, width, specifications);
     this.name = "kevandnat";
+    this.ships = new ArrayList<>();
   }
 
   @Override
@@ -58,7 +58,9 @@ public abstract class AbstractPlayer implements Player {
         init.add(ship);
       }
     }
+    ships.addAll(init);
     return init;
+
   }
 
 

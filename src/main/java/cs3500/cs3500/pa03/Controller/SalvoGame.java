@@ -53,10 +53,10 @@ public class SalvoGame implements Controller {
 
 
       // setup the ship placement
-      AbstractPlayer player1 = new SalvoPlayer(height, width, fleets);
-      AbstractPlayer player2 = new AIPlayer(height, width, fleets);
-      List<Ship> player1_ships = player1.getShips();
-      List<Ship> player2_ships = player2.getShips();
+      AbstractPlayer player1 = new SalvoPlayer();
+      AbstractPlayer player2 = new AIPlayer();
+      List<Ship> player1_ships = player1.setup(height, width, fleets);
+      List<Ship> player2_ships = player2.setup(height, width, fleets);
 
       // mutate the player board field
       List<Coord> empty = new ArrayList<>();
@@ -77,7 +77,9 @@ public class SalvoGame implements Controller {
         // attack
         List<Coord> user_shots = player1.takeShots();
         List<Coord> ai_shots = player2.takeShots();
-
+        for (Coord c: ai_shots) {
+          System.out.println(c.toString());
+        }
         System.out.println();
         List<Coord> user_damaged = player1.reportDamage(ai_shots);
         List<Coord> ai_damaged = player2.reportDamage(user_shots);
@@ -89,8 +91,7 @@ public class SalvoGame implements Controller {
         // check the outcome
         game_state = GameOutcomeChecker.checkGameOutcome(player1.getPlayerBoard(), player2.getPlayerBoard());
       }
-
-      player1.endGame(game_state, "Your final result is ");
+      player1.endGame(game_state, "Your final result is");
     } catch (IOException e) {
       throw new RuntimeException(e);
     }
