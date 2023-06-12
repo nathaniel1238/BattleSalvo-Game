@@ -82,14 +82,11 @@ public class ProxyController {
   }
 
   private void handleJoin(JsonNode arguments) {
-    // Create the JSON message
-    ObjectNode arg = mapper.createObjectNode();
-    arg.put("name", player.name());
-    arg.put("game-type", "SINGLE");
-
-    ObjectNode message = mapper.createObjectNode();
-    message.put("method-name", "join");
-    message.set("arguments", arguments);
+    JoinJson joinJson = new JoinJson("kevleee21", "SINGLE");
+    JsonNode jsonNode = this.mapper.convertValue(joinJson, JsonNode.class);
+    MessageJson messageJson = new MessageJson("join", jsonNode);
+    JsonNode jsonResponse = JsonUtils.serializeRecord(messageJson);
+    this.out.println(jsonResponse);
   }
 
   private void handleSetUp(JsonNode arguments) {
@@ -184,12 +181,5 @@ public class ProxyController {
       arrayNode.add(coordNode);
     }
     return arrayNode;
-  }
-
-  private void sendResponse(String command, JsonNode response) {
-    ObjectNode responseNode = mapper.createObjectNode();
-    responseNode.put("command", command);
-    responseNode.set("response", response);
-    out.println(responseNode.toString());
   }
 }
