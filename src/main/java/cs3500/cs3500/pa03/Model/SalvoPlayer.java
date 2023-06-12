@@ -17,6 +17,8 @@ public class SalvoPlayer extends AbstractPlayer {
   public SalvoPlayer() {
     super();
     this.scanner = new Scanner(System.in);
+
+
   }
 
   /**

@@ -15,11 +15,13 @@ public abstract class AbstractPlayer implements Player {
   protected List<List<String>> player_board;
   protected List<List<String>> opp_board;
   protected String name;
+  protected List<Ship> ships;
 
   public AbstractPlayer() {
     this.player_board = new ArrayList<>();
     this.opp_board = new ArrayList<>();
     this.name = "kevandnat";
+    this.ships = new ArrayList<>();
   }
 
   @Override
@@ -56,7 +58,9 @@ public abstract class AbstractPlayer implements Player {
         init.add(ship);
       }
     }
+    ships.addAll(init);
     return init;
+
   }
 
 
