@@ -18,7 +18,7 @@ public class Driver {
    */
   public static void main(String[] args) throws IOException {
     try {
-      AbstractPlayer ai = new AIPlayer()
+      AbstractPlayer ai = new AIPlayer();
       Socket socket = new Socket("0.0.0.0", 35001);
       Appendable output = System.out;
       SalvoGame game = new SalvoGame(new InputStreamReader(System.in), output);

@@ -10,8 +10,8 @@ import java.util.Random;
 public class AIPlayer extends AbstractPlayer {
   private List<Coord> shotAt; // Declare the availableShots list as an instance variable
 
-  public AIPlayer(int height, int width, Map<ShipType, Integer> specifications) {
-    super(height, width, specifications);
+  public AIPlayer() {
+    super();
     this.shotAt = new ArrayList<>();
   }
 

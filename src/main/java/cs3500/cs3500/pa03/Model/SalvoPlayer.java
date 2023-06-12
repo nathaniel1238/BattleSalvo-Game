@@ -14,8 +14,8 @@ import java.util.Scanner;
  */
 public class SalvoPlayer extends AbstractPlayer {
   protected Scanner scanner;
-  public SalvoPlayer(int height, int width, Map<ShipType, Integer> specifications) {
-    super(height, width, specifications);
+  public SalvoPlayer() {
+    super();
     this.scanner = new Scanner(System.in);
   }
 
