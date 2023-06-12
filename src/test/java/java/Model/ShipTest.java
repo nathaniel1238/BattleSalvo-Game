@@ -1,5 +1,5 @@
 //package Model;
-//import cs3500.cs3500.pa03.Controller.ShipType;
+//import cs3500.pa04.ShipType;
 //import org.junit.jupiter.api.Test;
 //
 //import java.util.ArrayList;

@@ -1,4 +1,4 @@
-package cs3500.cs3500.pa03.Controller;
+package cs3500.pa04;
 
 /**
  * represents the 4 different types of ships that have to be on the board

@@ -1,6 +1,9 @@
 package cs3500.cs3500.pa03.Model;
 
-import cs3500.cs3500.pa03.Controller.ShipType;
+import cs3500.pa04.Coord;
+import cs3500.pa04.GameResult;
+import cs3500.pa04.Ship;
+import cs3500.pa04.ShipType;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -12,16 +15,18 @@ public abstract class AbstractPlayer implements Player {
   protected List<List<String>> player_board;
   protected List<List<String>> opp_board;
   protected List<Ship> ships;
+  protected String name;
 
   public AbstractPlayer(int height, int width, Map<ShipType, Integer> specifications) {
     this.player_board = new ArrayList<>();
     this.opp_board = new ArrayList<>();
     this.ships = setup(height, width, specifications);
+    this.name = "kevandnat";
   }
 
   @Override
   public String name() {
-    return null;
+    return this.name;
   }
 
   /**
@@ -37,19 +42,46 @@ public abstract class AbstractPlayer implements Player {
   @Override
   public List<Ship> setup(int height, int width, Map<ShipType, Integer> specifications) {
     List<Ship> init = new ArrayList<>();
-    for (Map.Entry<ShipType, Integer> entry: specifications.entrySet()) {
+    for (Map.Entry<ShipType, Integer> entry : specifications.entrySet()) {
       ShipType shipType = entry.getKey();
       Integer count = entry.getValue();
       for (int i = 0; i < count; i++) {
         Direction direction = Direction.randomDirection();
         List<Coord> ship_coordinates = RandomCoordinates.generateShipCoord(height, width, shipType, direction);
         List<Coord> filtered = UpdateCoordinates.updateCoord(height, width, shipType, init, ship_coordinates);
-        Ship ship = new Ship(shipType, filtered);
+        Ship ship;
+        if (isVertical(filtered)) {
+          ship = new Ship(shipType, filtered, Direction.VERTICAL);
+        } else {
+          ship = new Ship(shipType, filtered, Direction.HORIZONTAL);
+        }
         init.add(ship);
       }
     }
     return init;
   }
+
+
+  /**
+   * Checks if the given list of coordinates represents a vertical arrangement.
+   *
+   * @param coords The list of coordinates to check.
+   * @return True if the coordinates are vertically arranged, false otherwise.
+   */
+  private boolean isVertical(List<Coord> coords) {
+    if (coords != null && coords.size() > 1) {
+      int firstX = coords.get(0).getX();
+      for (Coord coord : coords) {
+        if (coord.getX() != firstX) {
+          return false;
+        }
+      }
+      return true;
+    }
+    return false;
+  }
+
+
 
   /**
    * Given the list of shots the opponent has fired on this player's board, report which
@@ -98,11 +130,11 @@ public abstract class AbstractPlayer implements Player {
   @Override
   public void endGame(GameResult result, String reason) {
     if (result.equals(GameResult.WIN)) {
-      System.out.println(reason + " a win! You hit all their ships before they hit all yours!");
+      System.out.println(reason + " Congrats!");
     } else if (result.equals(GameResult.LOSE)) {
-      System.out.println(reason + " a loss! They hit all your ships before you hit all theirs!");
+      System.out.println(reason + " Try again!");
     } else {
-      System.out.println(reason + " a draw! Both players hit all the remaining ships at the same time!");
+      System.out.println(reason + " So close!");
     }
   }
 

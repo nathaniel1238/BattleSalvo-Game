@@ -1,7 +1,7 @@
 package cs3500.cs3500.pa03.Controller;
 
+import cs3500.pa04.ShipType;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.InputMismatchException;
 import java.util.LinkedHashMap;
 import java.util.List;

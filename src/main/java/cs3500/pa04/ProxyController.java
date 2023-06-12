@@ -5,12 +5,8 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
-import cs3500.pa03.model.Coord;
-import cs3500.pa03.model.Ship;
-import cs3500.pa03.model.ShipType;
-import cs3500.pa03.model.Player;
-import cs3500.pa03.model.GameResult;
-
+import cs3500.cs3500.pa03.Model.AIPlayer;
+import cs3500.cs3500.pa03.Model.AbstractPlayer;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.PrintStream;
@@ -24,7 +20,7 @@ public class ProxyController {
   private final Socket server;
   private final InputStream in;
   private final PrintStream out;
-  private final Player player;
+  private final AbstractPlayer player;
   private final ObjectMapper mapper = new ObjectMapper();
 
   private static final JsonNode VOID_RESPONSE =
@@ -37,11 +33,11 @@ public class ProxyController {
    * @param player the instance of the player
    * @throws IOException if
    */
-  public ProxyController(Socket server, Player player) throws IOException {
+  public ProxyController(Socket server, AbstractPlayer player) throws IOException {
     this.server = server;
     this.in = server.getInputStream();
     this.out = new PrintStream(server.getOutputStream());
-    this.player = player;
+    this.player = new AIPlayer();
   }
 
   public void run() {
@@ -49,7 +45,7 @@ public class ProxyController {
       JsonParser parser = this.mapper.getFactory().createParser(this.in);
 
       while (!this.server.isClosed()) {
-        MessageJson message = mapper.readTree(parser).traverse();
+        MessageJson message = parser.readValueAs(MessageJson.class);
         delegate(message);
       }
     } catch (IOException e) {
@@ -68,16 +64,16 @@ public class ProxyController {
       case "setup":
         handleSetUp(arguments);
         break;
-      case "win":
-        handleWin(arguments);
+      case "end-game":
+        handleFinal(arguments);
         break;
-      case "damage":
+      case "report-damage":
         handleDamage(arguments);
         break;
-      case "shots":
-        handleShots(arguments);
+      case "take-shots":
+        handleShots();
         break;
-      case "successful":
+      case "successful-hits":
         handleSuccessful(arguments);
         break;
       default:
@@ -86,9 +82,14 @@ public class ProxyController {
   }
 
   private void handleJoin(JsonNode arguments) {
-    String playerName = arguments.get("playerName").asText();
-    player.name(playerName);
-    sendResponse("join", VOID_RESPONSE);
+    // Create the JSON message
+    ObjectNode arg = mapper.createObjectNode();
+    arg.put("name", player.name());
+    arg.put("game-type", "SINGLE");
+
+    ObjectNode message = mapper.createObjectNode();
+    message.put("method-name", "join");
+    message.set("arguments", arguments);
   }
 
   private void handleSetUp(JsonNode arguments) {
@@ -100,31 +101,46 @@ public class ProxyController {
     sendResponse("setup", response);
   }
 
-  private void handleWin(JsonNode arguments) {
-    String playerName = arguments.get("playerName").asText();
+  private void handleFinal(JsonNode arguments) {
+    String result = arguments.get("result").asText();
     String reason = arguments.get("reason").asText();
-    player.endGame(GameResult.WIN, reason);
-    sendResponse("win", VOID_RESPONSE);
+    if (result.equals("WIN")) {
+      player.endGame(GameResult.WIN, reason);
+    } else if(result.equals("LOSE")) {
+      player.endGame(GameResult.LOSE, reason);
+    } else {
+      player.endGame(GameResult.DRAW, reason);
+    out.println();
+    }
   }
 
   private void handleDamage(JsonNode arguments) {
-    List<Coord> opponentShots = parseCoordList(arguments.get("opponentShots"));
+    List<Coord> opponentShots = new ArrayList<>();
+    for (JsonNode shotNode : arguments) {
+      Coord shot = this.mapper.convertValue(shotNode, Coord.class);
+      opponentShots.add(shot);
+    }
     List<Coord> hits = player.reportDamage(opponentShots);
-    JsonNode response = createCoordListResponse(hits);
-    sendResponse("damage", response);
+    Volley damaged = new Volley(hits);
+    JsonNode response = JsonUtils.serializeRecord(damaged);
+    out.println(response);
   }
 
-  private void handleShots(JsonNode arguments) {
-    int numShots = arguments.get("numShots").asInt();
-    List<Coord> shots = player.takeShots(numShots);
-    JsonNode response = createCoordListResponse(shots);
-    sendResponse("shots", response);
+  private void handleShots() {
+    List<Coord> shots = player.takeShots();
+    Volley shot = new Volley(shots);
+    JsonNode response = JsonUtils.serializeRecord(shot);
+    out.println(response);
   }
 
   private void handleSuccessful(JsonNode arguments) {
-    List<Coord> shotsThatHitOpponentShips = parseCoordList(arguments.get("shotsThatHitOpponentShips"));
-    player.successfulHits(shotsThatHitOpponentShips);
-    sendResponse("successful", VOID_RESPONSE);
+    List<Coord> successful_shots = new ArrayList<>();
+    for (JsonNode shotNode : arguments) {
+      Coord shot = this.mapper.convertValue(shotNode, Coord.class);
+      successful_shots.add(shot);
+    }
+    player.successfulHits(successful_shots);
+    out.println();
   }
 
   private Map<ShipType, Integer> parseShipSpecifications(JsonNode node) {
@@ -152,8 +168,8 @@ public class ProxyController {
     ArrayNode arrayNode = mapper.createArrayNode();
     for (Ship ship : shipPlacements) {
       ObjectNode shipNode = mapper.createObjectNode();
-      shipNode.put("shipType", ship.getShipType().toString().toLowerCase());
-      shipNode.put("size", ship.getSize());
+      shipNode.put("shipType", ship.getType().toString().toLowerCase());
+      shipNode.put("size", ship.getCoord().size());
       arrayNode.add(shipNode);
     }
     return arrayNode;
