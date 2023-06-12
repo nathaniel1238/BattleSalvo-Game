@@ -15,16 +15,18 @@ public abstract class AbstractPlayer implements Player {
   protected List<List<String>> player_board;
   protected List<List<String>> opp_board;
   protected List<Ship> ships;
+  protected String name;
 
   public AbstractPlayer(int height, int width, Map<ShipType, Integer> specifications) {
     this.player_board = new ArrayList<>();
     this.opp_board = new ArrayList<>();
     this.ships = setup(height, width, specifications);
+    this.name = "kevandnat";
   }
 
   @Override
   public String name() {
-    return null;
+    return this.name;
   }
 
   /**
@@ -128,11 +130,11 @@ public abstract class AbstractPlayer implements Player {
   @Override
   public void endGame(GameResult result, String reason) {
     if (result.equals(GameResult.WIN)) {
-      System.out.println(reason + " a win! You hit all their ships before they hit all yours!");
+      System.out.println(reason + " Congrats!");
     } else if (result.equals(GameResult.LOSE)) {
-      System.out.println(reason + " a loss! They hit all your ships before you hit all theirs!");
+      System.out.println(reason + " Try again!");
     } else {
-      System.out.println(reason + " a draw! Both players hit all the remaining ships at the same time!");
+      System.out.println(reason + " So close!");
     }
   }
 
