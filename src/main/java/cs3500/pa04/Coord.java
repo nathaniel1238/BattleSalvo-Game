@@ -1,5 +1,7 @@
 package cs3500.pa04;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import java.util.Objects;
 
 /**
@@ -9,7 +11,8 @@ public class Coord {
   private int x;
   private int y;
 
-  public Coord(int x, int y) {
+  @JsonCreator
+  public Coord(@JsonProperty("x") int x, @JsonProperty("y") int y) {
     this.x = x;
     this.y = y;
   }

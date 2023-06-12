@@ -12,7 +12,7 @@ public class AIPlayer extends AbstractPlayer {
 
   public AIPlayer(int height, int width, Map<ShipType, Integer> specifications) {
     super(height, width, specifications);
-    this.shotAt = new ArrayList<>(); // Initialize the availableShots list
+    this.shotAt = new ArrayList<>();
   }
 
   /**
