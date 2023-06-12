@@ -4,6 +4,7 @@ import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ArrayNode;
+import com.fasterxml.jackson.databind.node.JsonNodeFactory;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import cs3500.cs3500.pa03.Model.AIPlayer;
 import cs3500.cs3500.pa03.Model.AbstractPlayer;
@@ -54,8 +55,8 @@ public class ProxyController {
   }
 
   private void delegate(MessageJson message) {
-    String command = message.getCommand();
-    JsonNode arguments = message.getArguments();
+    String command = message.methodName();
+    JsonNode arguments = message.args();
 
     switch (command) {
       case "join":
@@ -94,8 +95,13 @@ public class ProxyController {
     int width = arguments.get("width").asInt();
     Map<ShipType, Integer> shipSpecifications = parseShipSpecifications(arguments.get("shipSpecifications"));
     List<Ship> shipPlacements = player.setup(height, width, shipSpecifications);
-    JsonNode response = createShipPlacementsResponse(shipPlacements);
-    sendResponse("setup", response);
+
+    List<ShipJson> response = createShipPlacementsResponse(shipPlacements);
+    Fleet fleet = new Fleet(response);
+
+    JsonNode jsonResponse = JsonUtils.serializeRecord(fleet);
+    MessageJson messageJson = new MessageJson("setup", jsonResponse);
+    this.out.println(messageJson);
   }
 
   private void handleFinal(JsonNode arguments) {
@@ -107,42 +113,47 @@ public class ProxyController {
       player.endGame(GameResult.LOSE, reason);
     } else {
       player.endGame(GameResult.DRAW, reason);
-    out.println();
     }
+
+    JsonNode jsonResponse = JsonNodeFactory.instance.objectNode();
+    MessageJson messageJson = new MessageJson("end-game", jsonResponse);
+    this.out.println(messageJson);
+
   }
 
   private void handleDamage(JsonNode arguments) {
-    List<Coord> opponentShots = new ArrayList<>();
-    for (JsonNode shotNode : arguments) {
-      Coord shot = this.mapper.convertValue(shotNode, Coord.class);
-      opponentShots.add(shot);
-    }
+    List<Coord> opponentShots = volleyParser(arguments);
+
     List<Coord> hits = player.reportDamage(opponentShots);
-    Volley damaged = new Volley(hits);
+
+    List<CoordJson> coordJsons = createCoordJsons(hits);
+
+    Volley damaged = new Volley(coordJsons);
     JsonNode response = JsonUtils.serializeRecord(damaged);
     MessageJson message = new MessageJson("report-damaged", response);
+
     out.println(message);
   }
 
   private void handleShots() {
     List<Coord> shots = player.takeShots();
-    Volley shot = new Volley(shots);
+    List<CoordJson> coordJsons = createCoordJsons(shots);
+    Volley shot = new Volley(coordJsons);
     JsonNode response = JsonUtils.serializeRecord(shot);
     MessageJson message = new MessageJson("take-shots", response);
-    out.println(message);
+    this.out.println(message);
   }
 
   private void handleSuccessful(JsonNode arguments) {
-    List<Coord> successful_shots = new ArrayList<>();
-    for (JsonNode shotNode : arguments) {
-      Coord shot = this.mapper.convertValue(shotNode, Coord.class);
-      successful_shots.add(shot);
-    }
+    List<Coord> successful_shots = volleyParser(arguments);
     player.successfulHits(successful_shots);
-    MessageJson message = new MessageJson("successful-hits", mapper.createObjectNode());
-    JsonNode jsonResponse = JsonUtils.serializeRecord(message);
-    this.out.println(jsonResponse);
+
+    JsonNode jsonResponse = JsonNodeFactory.instance.objectNode();
+    MessageJson message = new MessageJson("successful-hits", jsonResponse);
+    this.out.println(message);
   }
+
+
 
   private Map<ShipType, Integer> parseShipSpecifications(JsonNode node) {
     Map<ShipType, Integer> shipSpecifications = new HashMap<>();
@@ -154,36 +165,32 @@ public class ProxyController {
     return shipSpecifications;
   }
 
-  private List<Coord> parseCoordList(JsonNode node) {
-    List<Coord> coordList = new ArrayList<>();
-    for (JsonNode entry : node) {
-      int x = entry.get("x").asInt();
-      int y = entry.get("y").asInt();
-      Coord coord = new Coord(x, y);
-      coordList.add(coord);
-    }
-    return coordList;
-  }
 
-  private JsonNode createShipPlacementsResponse(List<Ship> shipPlacements) {
-    ArrayNode arrayNode = mapper.createArrayNode();
+  private List<ShipJson> createShipPlacementsResponse(List<Ship> shipPlacements) {
+    List<ShipJson> ships = new ArrayList<>();
     for (Ship ship : shipPlacements) {
-      ObjectNode shipNode = mapper.createObjectNode();
-      shipNode.put("shipType", ship.getType().toString().toLowerCase());
-      shipNode.put("size", ship.getCoord().size());
-      arrayNode.add(shipNode);
+      ships.add(new ShipJson(ship.getCoord().get(0), ship.getCoord().size(), ship.getDirection()));
     }
-    return arrayNode;
+    return ships;
   }
 
-  private JsonNode createCoordListResponse(List<Coord> coordList) {
-    ArrayNode arrayNode = mapper.createArrayNode();
-    for (Coord coord : coordList) {
-      ObjectNode coordNode = mapper.createObjectNode();
-      coordNode.put("x", coord.getX());
-      coordNode.put("y", coord.getY());
-      arrayNode.add(coordNode);
+  private List<CoordJson> createCoordJsons(List<Coord> coords) {
+    List<CoordJson> jsons = new ArrayList<>();
+    for (Coord coord : coords) {
+      jsons.add(new CoordJson(coord.getX(), coord.getY()));
     }
-    return arrayNode;
+    return jsons;
   }
+
+  private List<Coord> volleyParser(JsonNode node) {
+    List<Coord> shots = new ArrayList<>();
+    JsonNode coordinatesNode = node.path("arguments").path("coordinates");
+    for (JsonNode coordNode : coordinatesNode) {
+      int x = coordNode.path("x").asInt();
+      int y = coordNode.path("y").asInt();
+      shots.add(new Coord(x, y));
+    }
+    return shots;
+  }
+
 }

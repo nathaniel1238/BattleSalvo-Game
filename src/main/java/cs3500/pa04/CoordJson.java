@@ -3,5 +3,10 @@ package cs3500.pa04;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 public record CoordJson(
-    @JsonProperty("coord") int x, int y) {
+    @JsonProperty("x") int x,
+    @JsonProperty("y") int y) {
+
+  public int getX() {
+    return this.x;
+  }
 }

@@ -12,6 +12,15 @@ import java.util.Scanner;
  * This is the main driver of this project.
  */
 public class Driver {
+
+  public static void runClient(String host, int port)
+      throws IOException, IllegalStateException {
+
+    AbstractPlayer player = new AIPlayer();
+    Socket server = new Socket(host, port);
+    ProxyController controller = new ProxyController(server, player);
+    controller.run();
+  }
   /**
    * Project entry point
    *
@@ -19,12 +28,11 @@ public class Driver {
    */
   public static void main(String[] args) throws IOException {
     try {
-      AbstractPlayer ai = new AIPlayer();
-      Socket socket = new Socket("0.0.0.0", 35001);
+      String host = "0.0.0.0";
+      int port = 35001;
+      runClient(host, port);
       Appendable output = System.out;
       SalvoGame game = new SalvoGame(new InputStreamReader(System.in), output);
-      ProxyController controller = new ProxyController(socket, ai);
-      controller.run();
     } catch (IOException e) {
       e.printStackTrace();
     }
