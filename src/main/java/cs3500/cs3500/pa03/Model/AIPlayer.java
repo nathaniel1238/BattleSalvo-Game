@@ -59,4 +59,5 @@ public class AIPlayer extends AbstractPlayer {
     }
     return availableshots;
   }
+
 }

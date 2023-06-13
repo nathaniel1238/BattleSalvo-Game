@@ -241,12 +241,4 @@ public class ProxyController {
     }
   }
 
-//    List<Coord> shots = new ArrayList<>();
-//    JsonNode coordinatesNode = node.get("arguments").get("coordinates");
-//    for (JsonNode coordNode : coordinatesNode) {
-//      int x = coordNode.get("x").asInt();
-//      int y = coordNode.get("y").asInt();
-//      shots.add(new Coord(x, y));
-//    }
-
 }
