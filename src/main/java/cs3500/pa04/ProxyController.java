@@ -23,6 +23,8 @@ public class ProxyController {
   private final PrintStream out;
   private final AbstractPlayer player;
   private final ObjectMapper mapper = new ObjectMapper();
+  private int height;
+  private int width;
 
   private static final JsonNode VOID_RESPONSE =
       new ObjectMapper().getNodeFactory().textNode("void");
@@ -39,6 +41,8 @@ public class ProxyController {
     this.in = server.getInputStream();
     this.out = new PrintStream(server.getOutputStream());
     this.player = new AIPlayer();
+    this.height = height;
+    this.width = width;
   }
 
   public void run() {
@@ -91,17 +95,24 @@ public class ProxyController {
   }
 
   private void handleSetUp(JsonNode arguments) {
-    int height = arguments.get("height").asInt();
-    int width = arguments.get("width").asInt();
-    Map<ShipType, Integer> shipSpecifications = parseShipSpecifications(arguments.get("shipSpecifications"));
+    height = arguments.get("height").asInt();
+    width = arguments.get("width").asInt();
+
+    System.out.println(height);
+    System.out.println(width);
+
+    Map<ShipType, Integer> shipSpecifications = parseShipSpecifications(arguments.get("fleet-spec"));
     List<Ship> shipPlacements = player.setup(height, width, shipSpecifications);
+    player.generateBoard(shipPlacements, new ArrayList<>(), new ArrayList<>(), height, width);
 
     List<ShipJson> response = createShipPlacementsResponse(shipPlacements);
     Fleet fleet = new Fleet(response);
 
     JsonNode jsonResponse = JsonUtils.serializeRecord(fleet);
     MessageJson messageJson = new MessageJson("setup", jsonResponse);
-    this.out.println(messageJson);
+    JsonNode output = JsonUtils.serializeRecord(messageJson);
+    drawBoard(System.out, player.getPlayerBoard());
+    this.out.println(output);
   }
 
   private void handleFinal(JsonNode arguments) {
@@ -116,32 +127,54 @@ public class ProxyController {
     }
 
     JsonNode jsonResponse = JsonNodeFactory.instance.objectNode();
-    MessageJson messageJson = new MessageJson("end-game", jsonResponse);
-    this.out.println(messageJson);
+    MessageJson message = new MessageJson("end-game", jsonResponse);
+    JsonNode output = JsonUtils.serializeRecord(message);
+    this.out.println(output);
 
   }
 
   private void handleDamage(JsonNode arguments) {
     List<Coord> opponentShots = volleyParser(arguments);
+    for (Coord c: opponentShots) {
+      System.out.println(c.toString());
+    }
 
+    System.out.println(height);
+    System.out.println(width);
+
+    drawBoard(System.out, player.getPlayerBoard());
     List<Coord> hits = player.reportDamage(opponentShots);
+
+    player.generateBoard(player.getShips(), opponentShots, hits, height, width);
+    drawBoard(System.out, player.getPlayerBoard());
+
+    for (Coord c: hits) {
+      System.out.println(c);
+    }
 
     List<CoordJson> coordJsons = createCoordJsons(hits);
 
     Volley damaged = new Volley(coordJsons);
     JsonNode response = JsonUtils.serializeRecord(damaged);
-    MessageJson message = new MessageJson("report-damaged", response);
-
-    out.println(message);
+    MessageJson message = new MessageJson("report-damage", response);
+    JsonNode output = JsonUtils.serializeRecord(message);
+    drawBoard(System.out, player.getPlayerBoard());
+    out.println(output);
   }
 
   private void handleShots() {
     List<Coord> shots = player.takeShots();
+//    for (Coord c : shots) {
+//      System.out.println(c.toString());
+//    }
+
     List<CoordJson> coordJsons = createCoordJsons(shots);
     Volley shot = new Volley(coordJsons);
     JsonNode response = JsonUtils.serializeRecord(shot);
     MessageJson message = new MessageJson("take-shots", response);
-    this.out.println(message);
+    JsonNode output = JsonUtils.serializeRecord(message);
+
+    this.out.println(output);
   }
 
   private void handleSuccessful(JsonNode arguments) {
@@ -150,19 +183,20 @@ public class ProxyController {
 
     JsonNode jsonResponse = JsonNodeFactory.instance.objectNode();
     MessageJson message = new MessageJson("successful-hits", jsonResponse);
-    this.out.println(message);
+    JsonNode output = JsonUtils.serializeRecord(message);
+    this.out.println(output);
   }
 
 
 
   private Map<ShipType, Integer> parseShipSpecifications(JsonNode node) {
-    Map<ShipType, Integer> shipSpecifications = new HashMap<>();
-    for (JsonNode entry : node) {
-      ShipType shipType = ShipType.valueOf(entry.get("shipType").asText().toUpperCase());
-      int count = entry.get("count").asInt();
-      shipSpecifications.put(shipType, count);
-    }
-    return shipSpecifications;
+    SpecificationJson shipSpecifications = this.mapper.convertValue(node, SpecificationJson.class);
+    Map<ShipType, Integer> specMap = new HashMap<>();
+    specMap.put(ShipType.CARRIER, shipSpecifications.carrier());
+    specMap.put(ShipType.BATTLESHIP, shipSpecifications.battleship());
+    specMap.put(ShipType.DESTROYER, shipSpecifications.destroyer());
+    specMap.put(ShipType.SUBMARINE, shipSpecifications.submarine());
+    return specMap;
   }
 
 
@@ -183,14 +217,36 @@ public class ProxyController {
   }
 
   private List<Coord> volleyParser(JsonNode node) {
-    List<Coord> shots = new ArrayList<>();
-    JsonNode coordinatesNode = node.path("arguments").path("coordinates");
-    for (JsonNode coordNode : coordinatesNode) {
-      int x = coordNode.path("x").asInt();
-      int y = coordNode.path("y").asInt();
-      shots.add(new Coord(x, y));
+    Volley reportDamageJson = this.mapper.convertValue(node, Volley.class);
+    List<CoordJson> opCoordList = reportDamageJson.coordinates();
+    List<Coord> tempList = new ArrayList<>();
+    for (int i = 0; i < opCoordList.size(); i++) {
+      CoordJson coordinates = opCoordList.get(i);
+      tempList.add(new Coord(coordinates.x(), coordinates.y()));
     }
-    return shots;
+
+    return tempList;
   }
+
+  private void drawBoard(Appendable output, List<List<String>> board) {
+    try {
+      for (int i = 0; i < board.size(); i++) {
+        for (int k = 0; k < board.get(0).size(); k++) {
+          output.append(board.get(i).get(k)).append(" ");
+        }
+        output.append(System.lineSeparator());
+      }
+    }catch(IOException e) {
+      throw new IllegalStateException(e);
+    }
+  }
+
+//    List<Coord> shots = new ArrayList<>();
+//    JsonNode coordinatesNode = node.get("arguments").get("coordinates");
+//    for (JsonNode coordNode : coordinatesNode) {
+//      int x = coordNode.get("x").asInt();
+//      int y = coordNode.get("y").asInt();
+//      shots.add(new Coord(x, y));
+//    }
 
 }

@@ -97,9 +97,13 @@ public abstract class AbstractPlayer implements Player {
   public List<Coord> reportDamage(List<Coord> opponentShotsOnBoard) {
     List<Coord> hitCoordinates = new ArrayList<>();
 
+    System.out.println(player_board.size() + " " + player_board.get(0).size());
+
+
     for (Coord shot : opponentShotsOnBoard) {
       int x = shot.getX();
       int y = shot.getY();
+
 
       if (player_board.get(y).get(x).equals("S")) {
         hitCoordinates.add(shot);

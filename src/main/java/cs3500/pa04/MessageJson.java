@@ -7,13 +7,6 @@ import java.util.List;
 public record MessageJson(
     @JsonProperty("method-name") String methodName,
     @JsonProperty("arguments") JsonNode args) {
-  public String getCommand() {
-    return this.methodName;
-  }
-
-  public JsonNode getArguments() {
-    return this.args;
-  }
 }
 
 
