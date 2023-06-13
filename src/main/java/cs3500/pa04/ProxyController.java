@@ -240,5 +240,4 @@ public class ProxyController {
       throw new IllegalStateException(e);
     }
   }
-
 }
