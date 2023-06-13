@@ -1,4 +1,4 @@
-package Controller;
+package java.controller;
 
 import static org.junit.jupiter.api.Assertions.*;
 

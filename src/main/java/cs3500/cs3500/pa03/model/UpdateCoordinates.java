@@ -1,4 +1,4 @@
-package cs3500.cs3500.pa03.Model;
+package cs3500.cs3500.pa03.model;
 
 import cs3500.pa04.Coord;
 import cs3500.pa04.Ship;
@@ -6,20 +6,25 @@ import cs3500.pa04.ShipType;
 import java.util.List;
 
 /**
- * The UpdateCoordinates class provides methods to update ship coordinates based on certain conditions.
+ * The UpdateCoordinates class provides methods to update
+ * ship coordinates based on certain conditions.
  */
 public class UpdateCoordinates {
 
   /**
-   * Updates the coordinates of a ship based on the specified height, width, ship type, existing ships, and current coordinates.
-   * If there are overlapping coordinates with existing ships, a new set of random ship coordinates will be generated.
+   * Updates the coordinates of a ship based on the specified
+   * height, width, ship type, existing ships, and current coordinates.
+   * If there are overlapping coordinates with existing ships, a
+   * new set of random ship coordinates will be generated.
    *
    * @param height The height of the game board.
    * @param width  The width of the game board.
    * @param type   The type of ship being updated.
    * @param ships  The list of existing ships on the board.
    * @param coords The current coordinates of the ship being updated.
-   * @return The updated coordinates, ensuring there are no overlapping coordinates with existing ships.
+   *
+   * @return The updated coordinates, ensuring there are no
+   * overlapping coordinates with existing ships.
    */
   public static List<Coord> updateCoord(int height, int width, ShipType type, List<Ship> ships, List<Coord> coords) {
     if (ships != null) {

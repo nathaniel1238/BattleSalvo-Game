@@ -1,14 +1,14 @@
-package cs3500.cs3500.pa03.Controller;
+package cs3500.cs3500.pa03.controller;
 
-import cs3500.cs3500.pa03.Model.AIPlayer;
-import cs3500.cs3500.pa03.Model.AbstractPlayer;
+import cs3500.cs3500.pa03.model.AIPlayer;
+import cs3500.cs3500.pa03.model.AbstractPlayer;
+import cs3500.cs3500.pa03.model.GameOutcomeChecker;
+import cs3500.cs3500.pa03.model.SalvoPlayer;
 import cs3500.pa04.Coord;
-import cs3500.cs3500.pa03.Model.GameOutcomeChecker;
 import cs3500.pa04.GameResult;
-import cs3500.cs3500.pa03.Model.SalvoPlayer;
+import cs3500.cs3500.pa03.view.DrawBoard;
+import cs3500.cs3500.pa03.view.UserQuestions;
 import cs3500.pa04.Ship;
-import cs3500.cs3500.pa03.View.DrawBoard;
-import cs3500.cs3500.pa03.View.UserQuestions;
 import cs3500.pa04.ShipType;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -48,50 +48,51 @@ public class SalvoGame implements Controller {
 
       // ask user for fleet size
       UserQuestions.displayFleet(output, lesserValue);
-      DesiredFleetSize fleet_size = new DesiredFleetSize(scanner, input);
-      Map<ShipType, Integer> fleets = fleet_size.readFleet(lesserValue);
+      DesiredFleetSize fleetsize = new DesiredFleetSize(scanner, input);
+      Map<ShipType, Integer> fleets = fleetsize.readFleet(lesserValue);
 
 
       // setup the ship placement
       AbstractPlayer player1 = new SalvoPlayer();
       AbstractPlayer player2 = new AIPlayer();
-      List<Ship> player1_ships = player1.setup(height, width, fleets);
-      List<Ship> player2_ships = player2.setup(height, width, fleets);
+      List<Ship> player1ships = player1.setup(height, width, fleets);
+      List<Ship> player2ships = player2.setup(height, width, fleets);
 
       // mutate the player board field
       List<Coord> empty = new ArrayList<>();
 
 
-      player1.generateBoard(player1_ships, empty, empty, height, width);
-      player1.generateOppBoard(empty,empty, height, width);
-      player2.generateBoard(player2_ships, empty, empty, height, width);
+      player1.generateBoard(player1ships, empty, empty, height, width);
+      player1.generateOppBoard(empty, empty, height, width);
+      player2.generateBoard(player2ships, empty, empty, height, width);
       player2.generateOppBoard(empty, empty, height, width);
 
-      GameResult game_state = GameResult.IN_PROGRESS;
-      while (game_state.equals(GameResult.IN_PROGRESS)) {
+      GameResult gamestate = GameResult.IN_PROGRESS;
+      while (gamestate.equals(GameResult.IN_PROGRESS)) {
         // display the initial manuel player board and opponent data
         DrawBoard board = new DrawBoard();
-        int shots = AbstractPlayer.count(player1_ships, player1.getPlayerBoard());
+        int shots = AbstractPlayer.count(player1ships, player1.getPlayerBoard());
         board.draw(output, player1.getPlayerBoard(), player1.getOpponentBoard());
         UserQuestions.displayShots(output, shots);
         // attack
-        List<Coord> user_shots = player1.takeShots();
-        List<Coord> ai_shots = player2.takeShots();
-        for (Coord c: ai_shots) {
+        List<Coord> usershots = player1.takeShots();
+        List<Coord> aishots = player2.takeShots();
+        for (Coord c : aishots) {
           System.out.println(c.toString());
         }
         System.out.println();
-        List<Coord> user_damaged = player1.reportDamage(ai_shots);
-        List<Coord> ai_damaged = player2.reportDamage(user_shots);
-        player1.successfulHits(ai_damaged);
-        player2.successfulHits(user_damaged);
-        player1.generateBoard(player1_ships, ai_shots, user_damaged, height, width);
-        player1.generateOppBoard(user_shots, ai_damaged, height, width);
-        player2.generateBoard(player2_ships, user_shots, ai_damaged, height, width);
+        List<Coord> userdamaged = player1.reportDamage(aishots);
+        List<Coord> aidamaged = player2.reportDamage(usershots);
+        player1.successfulHits(aidamaged);
+        player2.successfulHits(userdamaged);
+        player1.generateBoard(player1ships, aishots, userdamaged, height, width);
+        player1.generateOppBoard(usershots, aidamaged, height, width);
+        player2.generateBoard(player2ships, usershots, aidamaged, height, width);
         // check the outcome
-        game_state = GameOutcomeChecker.checkGameOutcome(player1.getPlayerBoard(), player2.getPlayerBoard());
+        gamestate = GameOutcomeChecker.checkGameOutcome(player1.getPlayerBoard(),
+            player2.getPlayerBoard());
       }
-      player1.endGame(game_state, "Your final result is");
+      player1.endGame(gamestate, "Your final result is");
     } catch (IOException e) {
       throw new RuntimeException(e);
     }

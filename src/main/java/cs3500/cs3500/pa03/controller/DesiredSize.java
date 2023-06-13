@@ -1,7 +1,6 @@
-package cs3500.cs3500.pa03.Controller;
+package cs3500.cs3500.pa03.controller;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Scanner;
 
@@ -19,6 +18,7 @@ public class DesiredSize {
 
   /**
    * reads the user's desired board dimensions
+   *
    * @return an array of integers with the height and the width inside
    */
   public List<Integer> readSize() {

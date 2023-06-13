@@ -1,11 +1,9 @@
-package cs3500.cs3500.pa03.Model;
+package cs3500.cs3500.pa03.model;
 
 import cs3500.pa04.Coord;
-import cs3500.pa04.ShipType;
 import java.util.ArrayList;
 import java.util.InputMismatchException;
 import java.util.List;
-import java.util.Map;
 import java.util.Scanner;
 
 
@@ -14,6 +12,7 @@ import java.util.Scanner;
  */
 public class SalvoPlayer extends AbstractPlayer {
   protected Scanner scanner;
+
   public SalvoPlayer() {
     super();
     this.scanner = new Scanner(System.in);
@@ -32,13 +31,14 @@ public class SalvoPlayer extends AbstractPlayer {
     List<Coord> coordinates = new ArrayList<>();
 
     try {
-      for (int i = 0; i < AbstractPlayer.count(ships, player_board); i++) {
+      for (int i = 0; i < AbstractPlayer.count(ships, playerboard); i++) {
         int xvalue = scanner.nextInt();
         int yvalue = scanner.nextInt();
         boolean validInput = true;
 
         while (validInput) {
-          if ((xvalue >= 0 && xvalue < player_board.get(0).size()) && (yvalue >= 0 && yvalue < player_board.size())) {
+          if ((xvalue >= 0 && xvalue < playerboard.get(0).size())
+              && (yvalue >= 0 && yvalue < playerboard.size())) {
             Coord coordinate = new Coord(xvalue, yvalue);
             coordinates.add(coordinate);
             validInput = false; // Exit the loop

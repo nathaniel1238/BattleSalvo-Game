@@ -1,4 +1,4 @@
-package cs3500.cs3500.pa03.View;
+package cs3500.cs3500.pa03.view;
 
 import java.io.IOException;
 import java.util.List;

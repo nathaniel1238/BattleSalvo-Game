@@ -1,6 +1,6 @@
 package Model;
 
-import cs3500.cs3500.pa03.Model.GameOutcomeChecker;
+import cs3500.cs3500.pa03.model.GameOutcomeChecker;
 import cs3500.pa04.GameResult;
 import java.util.ArrayList;
 import java.util.Arrays;

@@ -1,9 +1,10 @@
 package cs3500.pa04;
 
 /**
- * represents the 4 different types of ships that have to be on the board
+ * Represents the four different types of ships that can be placed on the game board.
  */
 public enum ShipType {
+
   CARRIER(6),
   BATTLESHIP(5),
   DESTROYER(4),
@@ -11,6 +12,11 @@ public enum ShipType {
 
   private final int size;
 
+  /**
+   * Constructs a ShipType with the specified size.
+   *
+   * @param size the size of the ship
+   */
   private ShipType(int size) {
     this.size = size;
   }

@@ -1,4 +1,4 @@
-package cs3500.cs3500.pa03.View;
+package cs3500.cs3500.pa03.view;
 
 import java.io.IOException;
 
@@ -15,16 +15,23 @@ public class UserQuestions {
    * @throws IOException
    */
   public static void displaySize(Appendable output) throws IOException {
-    output.append("Hello! Welcome to BattleSalvo!").append(System.lineSeparator());
-    output.append("Please enter a valid height and width of the game board.").append(System.lineSeparator());
-    output.append("NOTE: The values of the height and width have to fall in the range of [6, 15]!").append(System.lineSeparator());
+    output.append("Hello! Welcome to BattleSalvo!")
+        .append(System.lineSeparator());
+    output.append("Please enter a valid height and " +
+        "width of the game board.").append(System.lineSeparator());
+    output.append("NOTE: The values of the height and width have " +
+        "to fall in the range of [6, 15]!").append(System.lineSeparator());
   }
 
   /**
-   * asks the user for the number of ships for each type and instructs them that there is a maximum
+   * asks the user for the number of ships for each type
+   * and instructs them that there is a maximum
    * number of ships and there needs to be atleast one of every shiptype
+   *
    * @param output the value that helps create the messages in the console
-   * @param max the lower value of the dimensions, the logic is handled in the SalvoGame Class
+   * @param max the lower value of the dimensions, the
+   *            logic is handled in the SalvoGame Class
+   *
    * @throws IOException
    */
   public static void displayFleet(Appendable output, int max) throws IOException {

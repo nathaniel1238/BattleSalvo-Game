@@ -1,6 +1,6 @@
-package Controller;
+package java.controller;
 
-import cs3500.cs3500.pa03.Controller.DesiredFleetSize;
+import cs3500.cs3500.pa03.controller.DesiredFleetSize;
 import cs3500.pa04.ShipType;
 import java.util.Map;
 import java.util.Scanner;

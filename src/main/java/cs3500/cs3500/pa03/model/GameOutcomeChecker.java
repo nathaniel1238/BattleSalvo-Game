@@ -1,4 +1,4 @@
-package cs3500.cs3500.pa03.Model;
+package cs3500.cs3500.pa03.model;
 
 import cs3500.pa04.GameResult;
 import java.util.List;
@@ -14,7 +14,8 @@ public class GameOutcomeChecker {
    * @param opponentBoard the ai player's board state
    * @return a Gameresult of the SalvoGame
    */
-  public static GameResult checkGameOutcome(List<List<String>> playerBoard, List<List<String>> opponentBoard) {
+  public static GameResult checkGameOutcome(List<List<String>>
+                playerBoard, List<List<String>> opponentBoard) {
     boolean allPlayerHits = checkAllHits(playerBoard);
     boolean allOpponentHits = checkAllHits(opponentBoard);
 
@@ -31,7 +32,9 @@ public class GameOutcomeChecker {
 
   /**
    * checks if all the ships are hit on the board
+   *
    * @param board takes in either the player or ai's board
+   *
    * @return true if all the ships are hit and false if they arent
    */
   private static boolean checkAllHits(List<List<String>> board) {

@@ -1,9 +1,9 @@
-package Model;
+package java.model;
 
 import cs3500.pa04.Coord;
 import cs3500.pa04.ShipType;
-import cs3500.cs3500.pa03.Model.Direction;
-import cs3500.cs3500.pa03.Model.RandomCoordinates;
+import cs3500.cs3500.pa03.model.Direction;
+import cs3500.cs3500.pa03.model.RandomCoordinates;
 import org.junit.jupiter.api.Test;
 
 import java.util.List;

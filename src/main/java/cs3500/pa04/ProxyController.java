@@ -3,11 +3,9 @@ package cs3500.pa04;
 import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.JsonNodeFactory;
-import com.fasterxml.jackson.databind.node.ObjectNode;
-import cs3500.cs3500.pa03.Model.AIPlayer;
-import cs3500.cs3500.pa03.Model.AbstractPlayer;
+import cs3500.cs3500.pa03.model.AIPlayer;
+import cs3500.cs3500.pa03.model.AbstractPlayer;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.PrintStream;
@@ -17,7 +15,13 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+/**
+ * Represents a proxy controller for the battleship game, which communicates with a server using
+ * JSON messages. It handles incoming messages from the server and delegates them to the appropriate
+ * methods in the player instance.
+ */
 public class ProxyController {
+
   private final Socket server;
   private final InputStream in;
   private final PrintStream out;
@@ -30,11 +34,11 @@ public class ProxyController {
       new ObjectMapper().getNodeFactory().textNode("void");
 
   /**
-   * Construct an instance of a ProxyPlayer.
+   * Constructs an instance of a ProxyPlayer.
    *
    * @param server the socket connection to the server
    * @param player the instance of the player.
-   * @throws IOException if
+   * @throws IOException if an I/O error occurs when creating the input/output streams
    */
   public ProxyController(Socket server, AbstractPlayer player) throws IOException {
     this.server = server;
@@ -45,6 +49,10 @@ public class ProxyController {
     this.width = width;
   }
 
+  /**
+   * Starts the proxy controller, listening for messages from the server and delegating them to the
+   * appropriate methods.
+   */
   public void run() {
     try {
       JsonParser parser = this.mapper.getFactory().createParser(this.in);
@@ -58,6 +66,11 @@ public class ProxyController {
     }
   }
 
+  /**
+   * Delegates the incoming message to the appropriate handler method based on the command.
+   *
+   * @param message the incoming message
+   */
   private void delegate(MessageJson message) {
     String command = message.methodName();
     JsonNode arguments = message.args();
@@ -86,6 +99,11 @@ public class ProxyController {
     }
   }
 
+  /**
+   * Handles the "join" command from the server, sending the join response with player information.
+   *
+   * @param arguments the arguments received from the server
+   */
   private void handleJoin(JsonNode arguments) {
     JoinJson joinJson = new JoinJson("kevleee21", "SINGLE");
     JsonNode jsonNode = this.mapper.convertValue(joinJson, JsonNode.class);
@@ -94,6 +112,12 @@ public class ProxyController {
     this.out.println(jsonResponse);
   }
 
+  /**
+   * Handles the "setup" command from the server, setting up the player's board and sending the
+   * response with ship placements.
+   *
+   * @param arguments the arguments received from the server
+   */
   private void handleSetUp(JsonNode arguments) {
     height = arguments.get("height").asInt();
     width = arguments.get("width").asInt();
@@ -101,7 +125,8 @@ public class ProxyController {
     System.out.println(height);
     System.out.println(width);
 
-    Map<ShipType, Integer> shipSpecifications = parseShipSpecifications(arguments.get("fleet-spec"));
+    Map<ShipType, Integer> shipSpecifications = parseShipSpecifications
+        (arguments.get("fleet-spec"));
     List<Ship> shipPlacements = player.setup(height, width, shipSpecifications);
     player.generateBoard(shipPlacements, new ArrayList<>(), new ArrayList<>(), height, width);
     player.generateOppBoard(new ArrayList<>(), new ArrayList<>(), height, width);
@@ -116,12 +141,17 @@ public class ProxyController {
     this.out.println(output);
   }
 
+  /**
+   * Handles the "end-game" command from the server, notifying the player about the game result.
+   *
+   * @param arguments the arguments received from the server
+   */
   private void handleFinal(JsonNode arguments) {
     String result = arguments.get("result").asText();
     String reason = arguments.get("reason").asText();
     if (result.equals("WIN")) {
       player.endGame(GameResult.WIN, reason);
-    } else if(result.equals("LOSE")) {
+    } else if (result.equals("LOSE")) {
       player.endGame(GameResult.LOSE, reason);
     } else {
       player.endGame(GameResult.DRAW, reason);
@@ -131,12 +161,17 @@ public class ProxyController {
     MessageJson message = new MessageJson("end-game", jsonResponse);
     JsonNode output = JsonUtils.serializeRecord(message);
     this.out.println(output);
-
   }
 
+  /**
+   * Handles the "report-damage" command from the server, reporting the damage to the player's board
+   * and sending the response with the damaged coordinates.
+   *
+   * @param arguments the arguments received from the server
+   */
   private void handleDamage(JsonNode arguments) {
     List<Coord> opponentShots = volleyParser(arguments);
-    for (Coord c: opponentShots) {
+    for (Coord c : opponentShots) {
       System.out.println(c.toString());
     }
 
@@ -149,7 +184,7 @@ public class ProxyController {
     player.generateBoard(player.getShips(), opponentShots, hits, height, width);
     drawBoard(System.out, player.getPlayerBoard());
 
-    for (Coord c: hits) {
+    for (Coord c : hits) {
       System.out.println(c);
     }
 
@@ -163,11 +198,12 @@ public class ProxyController {
     out.println(output);
   }
 
+  /**
+   * Handles the "take-shots" command from the server, allowing the player to take shots and sending
+   * the response with the shot coordinates.
+   */
   private void handleShots() {
     List<Coord> shots = player.takeShots();
-//    for (Coord c : shots) {
-//      System.out.println(c.toString());
-//    }
 
     List<CoordJson> coordJsons = createCoordJsons(shots);
     Volley shot = new Volley(coordJsons);
@@ -178,11 +214,17 @@ public class ProxyController {
     this.out.println(output);
   }
 
+  /**
+   * Handles the "successful-hits" command from the server,
+   * notifying the player about the successful
+   * hits.
+   *
+   * @param arguments the arguments received from the server
+   */
   private void handleSuccessful(JsonNode arguments) {
-    List<Coord> successful_shots = volleyParser(arguments);
+    List<Coord> successfulshots = volleyParser(arguments);
 
-
-    player.successfulHits(successful_shots);
+    player.successfulHits(successfulshots);
 
     JsonNode jsonResponse = JsonNodeFactory.instance.objectNode();
     MessageJson message = new MessageJson("successful-hits", jsonResponse);
@@ -190,8 +232,12 @@ public class ProxyController {
     this.out.println(output);
   }
 
-
-
+  /**
+   * Parses the ship specifications from the JSON arguments received from the server.
+   *
+   * @param node the JSON node containing the ship specifications
+   * @return a map representing the ship specifications
+   */
   private Map<ShipType, Integer> parseShipSpecifications(JsonNode node) {
     SpecificationJson shipSpecifications = this.mapper.convertValue(node, SpecificationJson.class);
     Map<ShipType, Integer> specMap = new HashMap<>();
@@ -202,7 +248,12 @@ public class ProxyController {
     return specMap;
   }
 
-
+  /**
+   * Creates a list of ship placements in JSON format from the list of ship objects.
+   *
+   * @param shipPlacements the list of ship placements
+   * @return a list of ship placements in JSON format
+   */
   private List<ShipJson> createShipPlacementsResponse(List<Ship> shipPlacements) {
     List<ShipJson> ships = new ArrayList<>();
     for (Ship ship : shipPlacements) {
@@ -211,6 +262,12 @@ public class ProxyController {
     return ships;
   }
 
+  /**
+   * Creates a list of coordinate JSON objects from the list of Coord objects.
+   *
+   * @param coords the list of Coord objects
+   * @return a list of coordinate JSON objects
+   */
   private List<CoordJson> createCoordJsons(List<Coord> coords) {
     List<CoordJson> jsons = new ArrayList<>();
     for (Coord coord : coords) {
@@ -219,6 +276,12 @@ public class ProxyController {
     return jsons;
   }
 
+  /**
+   * Parses the volley coordinates from the JSON arguments received from the server.
+   *
+   * @param node the JSON node containing the volley coordinates
+   * @return a list of Coord objects representing the volley coordinates
+   */
   private List<Coord> volleyParser(JsonNode node) {
     Volley reportDamageJson = this.mapper.convertValue(node, Volley.class);
     List<CoordJson> opCoordList = reportDamageJson.coordinates();
@@ -231,6 +294,12 @@ public class ProxyController {
     return tempList;
   }
 
+  /**
+   * Draws the player's board to the specified output.
+   *
+   * @param output the output to which the board will be drawn
+   * @param board the player's board representation
+   */
   private void drawBoard(Appendable output, List<List<String>> board) {
     try {
       for (int i = 0; i < board.size(); i++) {
@@ -239,7 +308,7 @@ public class ProxyController {
         }
         output.append(System.lineSeparator());
       }
-    }catch(IOException e) {
+    } catch (IOException e) {
       throw new IllegalStateException(e);
     }
   }

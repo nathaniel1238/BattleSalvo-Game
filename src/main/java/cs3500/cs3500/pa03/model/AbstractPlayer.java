@@ -1,4 +1,4 @@
-package cs3500.cs3500.pa03.Model;
+package cs3500.cs3500.pa03.model;
 
 import cs3500.pa04.Coord;
 import cs3500.pa04.GameResult;
@@ -12,14 +12,14 @@ import java.util.Map;
  * abstract class that represents players in the Salvo game
  */
 public abstract class AbstractPlayer implements Player {
-  protected List<List<String>> player_board;
-  protected List<List<String>> opp_board;
+  protected List<List<String>> playerboard;
+  protected List<List<String>> oppboard;
   protected String name;
   protected List<Ship> ships;
 
   public AbstractPlayer() {
-    this.player_board = new ArrayList<>();
-    this.opp_board = new ArrayList<>();
+    this.playerboard = new ArrayList<>();
+    this.oppboard = new ArrayList<>();
     this.name = "kevandnat";
     this.ships = new ArrayList<>();
   }
@@ -47,8 +47,8 @@ public abstract class AbstractPlayer implements Player {
       Integer count = entry.getValue();
       for (int i = 0; i < count; i++) {
         Direction direction = Direction.randomDirection();
-        List<Coord> ship_coordinates = RandomCoordinates.generateShipCoord(height, width, shipType, direction);
-        List<Coord> filtered = UpdateCoordinates.updateCoord(height, width, shipType, init, ship_coordinates);
+        List<Coord> shipcoordinates = RandomCoordinates.generateShipCoord(height, width, shipType, direction);
+        List<Coord> filtered = UpdateCoordinates.updateCoord(height, width, shipType, init, shipcoordinates);
         Ship ship;
         if (isVertical(filtered)) {
           ship = new Ship(shipType, filtered, Direction.VERTICAL);
@@ -97,7 +97,7 @@ public abstract class AbstractPlayer implements Player {
   public List<Coord> reportDamage(List<Coord> opponentShotsOnBoard) {
     List<Coord> hitCoordinates = new ArrayList<>();
 
-    System.out.println(player_board.size() + " " + player_board.get(0).size());
+    System.out.println(playerboard.size() + " " + playerboard.get(0).size());
 
 
     for (Coord shot : opponentShotsOnBoard) {
@@ -105,7 +105,7 @@ public abstract class AbstractPlayer implements Player {
       int y = shot.getY();
 
 
-      if (player_board.get(y).get(x).equals("S")) {
+      if (playerboard.get(y).get(x).equals("S")) {
         hitCoordinates.add(shot);
       }
     }
@@ -123,13 +123,14 @@ public abstract class AbstractPlayer implements Player {
     for (Coord shot : shotsThatHitOpponentShips) {
       int x = shot.getX();
       int y = shot.getY();
-      opp_board.get(y).set(x, "X");
+      oppboard.get(y).set(x, "X");
     }
   }
 
   /**
    * Notifies the player that the game is over.
    * Win, lose, and draw should all be supported
+   *
    * @param result if the player has won, lost, or forced a draw
    * @param reason the reason for the game ending
    */
@@ -146,6 +147,7 @@ public abstract class AbstractPlayer implements Player {
 
   /**
    * updates the state of the players board
+   *
    * @param ships the ships on the board
    * @param shots the opponents shots at the players board
    * @param hit the shots that hit the board
@@ -154,7 +156,7 @@ public abstract class AbstractPlayer implements Player {
    */
   public void generateBoard(List<Ship> ships, List<Coord> shots, List<Coord> hit, int height, int width) {
     if (shots.isEmpty() && hit.isEmpty()) {
-      initializeEmptyBoard(player_board, height, width);
+      initializeEmptyBoard(playerboard, height, width);
       placeShipsOnBoard(ships);
     } else {
       markHitsOnBoard(hit, shots);
@@ -163,6 +165,7 @@ public abstract class AbstractPlayer implements Player {
 
   /**
    * marks the missed and hit shots on the users board
+   *
    * @param hits the hit shots
    * @param shots the taken shots
    */
@@ -175,10 +178,10 @@ public abstract class AbstractPlayer implements Player {
           break;
         }
       }
-      if (!isHit && !player_board.get(shot.getY()).get(shot.getX()).equals("X")) {
-        player_board.get(shot.getY()).set(shot.getX(), "O");
+      if (!isHit && !playerboard.get(shot.getY()).get(shot.getX()).equals("X")) {
+        playerboard.get(shot.getY()).set(shot.getX(), "O");
       } else {
-        player_board.get(shot.getY()).set(shot.getX(), "X");
+        playerboard.get(shot.getY()).set(shot.getX(), "X");
       }
     }
   }
@@ -187,6 +190,7 @@ public abstract class AbstractPlayer implements Player {
 
   /**
    * places the ships on the board
+   *
    * @param ships the ships that are supposed to be on the board
    */
   private void placeShipsOnBoard(List<Ship> ships) {
@@ -194,14 +198,15 @@ public abstract class AbstractPlayer implements Player {
       for (Coord c : ship.getCoord()) {
         int x = c.getX();
         int y = c.getY();
-        player_board.get(y).set(x, "S");
+        playerboard.get(y).set(x, "S");
       }
     }
   }
 
   /**
    * updated the opponent board data so the player can know
-   *    * where they hit or missed
+   *    where they hit or missed
+   *
    * @param shots the users shots
    * @param hits the reported damage
    * @param height the height
@@ -209,7 +214,7 @@ public abstract class AbstractPlayer implements Player {
    */
   public void generateOppBoard(List<Coord> shots, List<Coord> hits, int height, int width) {
     if (shots.isEmpty()) {
-      initializeEmptyBoard(opp_board, height, width);
+      initializeEmptyBoard(oppboard, height, width);
     } else {
       markMissOnOppBoard(hits, shots);
     }
@@ -218,6 +223,7 @@ public abstract class AbstractPlayer implements Player {
 
   /**
    * marks the users missed shot
+   *
    * @param shots users shots
    * @param hits reported damage
    */
@@ -230,8 +236,8 @@ public abstract class AbstractPlayer implements Player {
           break;
         }
       }
-      if (!isHit && !opp_board.get(shot.getY()).get(shot.getX()).equals("X")) {
-        opp_board.get(shot.getY()).set(shot.getX(), "O");
+      if (!isHit && !oppboard.get(shot.getY()).get(shot.getX()).equals("X")) {
+        oppboard.get(shot.getY()).set(shot.getX(), "O");
       }
     }
   }
@@ -239,6 +245,7 @@ public abstract class AbstractPlayer implements Player {
 
   /**
    * initializes the empty board
+   *
    * @param height the height
    * @param width the width
    */
@@ -256,37 +263,40 @@ public abstract class AbstractPlayer implements Player {
   // Modify the AbstractPlayer class
 
   public List<List<String>> getPlayerBoard() {
-    return player_board;
+
+    return playerboard;
   }
 
   public List<List<String>> getOpponentBoard() {
-    return opp_board;
+
+    return oppboard;
   }
   public static int count(List<Ship> ships, List<List<String>> board) {
-    int fleet_size = ships.size();
-    for (Ship ship: ships) {
-      int count = sunked_count(ship.getCoord(), board);
+    int fleetsize = ships.size();
+    for (Ship ship : ships) {
+      int count = sunkedcount(ship.getCoord(), board);
       if (count == ship.getCoord().size()) {
-        fleet_size--;
+        fleetsize--;
       }
     }
-    return fleet_size;
+    return fleetsize;
   }
 
-  private static int sunked_count(List<Coord> ship_coord, List<List<String>> board) {
-    int hit_count = 0;
-    for (Coord c: ship_coord) {
+  private static int sunkedcount(List<Coord> ship_coord, List<List<String>> board) {
+    int hitcount = 0;
+    for (Coord c : ship_coord) {
       int x = c.getX();
       int y = c.getY();
       if (board.get(y).get(x).equals("X")) {
-        hit_count++;
+        hitcount++;
       }
     }
-    return hit_count;
+    return hitcount;
   }
 
 
   public List<Ship> getShips() {
+
     return this.ships;
   }
 

@@ -1,4 +1,4 @@
-package java.Model;
+package java.model;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 

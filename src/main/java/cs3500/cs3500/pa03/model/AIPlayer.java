@@ -1,14 +1,13 @@
-package cs3500.cs3500.pa03.Model;
+package cs3500.cs3500.pa03.model;
 
 import cs3500.pa04.Coord;
-import cs3500.pa04.ShipType;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 import java.util.Random;
 
 public class AIPlayer extends AbstractPlayer {
   private List<Coord> shotAt;
+
   public AIPlayer() {
     super();
     this.shotAt = new ArrayList<>();
@@ -22,7 +21,7 @@ public class AIPlayer extends AbstractPlayer {
   public List<Coord> takeShots() {
     List<Coord> available = generateAvailableShots();
     List<Coord> shotsTaken = new ArrayList<>();
-    int shotsRemaining = AbstractPlayer.count(ships, player_board);
+    int shotsRemaining = AbstractPlayer.count(ships, playerboard);
 
     // Generate a random shot
     Random random = new Random();
@@ -47,13 +46,14 @@ public class AIPlayer extends AbstractPlayer {
 
   /**
    * makes sure which shot coordinates are available to shoot at
+   *
    * @return
    */
   private List<Coord> generateAvailableShots() {
     List<Coord> availableshots = new ArrayList<>();
     // Iterate through the board and add the coordinates
-    for (int x = 0; x < player_board.get(0).size(); x++) {
-      for (int y = 0; y < player_board.size(); y++) {
+    for (int x = 0; x < playerboard.get(0).size(); x++) {
+      for (int y = 0; y < playerboard.size(); y++) {
         availableshots.add(new Coord(x, y));
       }
     }

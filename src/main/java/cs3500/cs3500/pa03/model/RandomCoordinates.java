@@ -1,4 +1,4 @@
-package cs3500.cs3500.pa03.Model;
+package cs3500.cs3500.pa03.model;
 
 import cs3500.pa04.Coord;
 import cs3500.pa04.ShipType;
