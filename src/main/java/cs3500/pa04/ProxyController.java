@@ -179,7 +179,7 @@ public class ProxyController {
 
   private void handleSuccessful(JsonNode arguments) {
     List<Coord> successful_shots = volleyParser(arguments);
-    player.successfulHits(successful_shots);
+    // player.successfulHits(successful_shots);
 
     JsonNode jsonResponse = JsonNodeFactory.instance.objectNode();
     MessageJson message = new MessageJson("successful-hits", jsonResponse);

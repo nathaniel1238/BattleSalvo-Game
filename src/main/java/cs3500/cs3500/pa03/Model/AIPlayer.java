@@ -52,9 +52,9 @@ public class AIPlayer extends AbstractPlayer {
   private List<Coord> generateAvailableShots() {
     List<Coord> availableshots = new ArrayList<>();
     // Iterate through the board and add the coordinates
-    for (int i = 0; i < player_board.size(); i++) {
-      for (int j = 0; j < player_board.get(i).size(); j++) {
-        availableshots.add(new Coord(i, j));
+    for (int x = 0; x < player_board.get(0).size(); x++) {
+      for (int y = 0; y < player_board.size(); y++) {
+        availableshots.add(new Coord(x, y));
       }
     }
     return availableshots;
