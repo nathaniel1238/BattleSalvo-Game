@@ -96,10 +96,6 @@ public abstract class AbstractPlayer implements Player {
   @Override
   public List<Coord> reportDamage(List<Coord> opponentShotsOnBoard) {
     List<Coord> hitCoordinates = new ArrayList<>();
-
-    System.out.println(playerboard.size() + " " + playerboard.get(0).size());
-
-
     for (Coord shot : opponentShotsOnBoard) {
       int x = shot.getX();
       int y = shot.getY();

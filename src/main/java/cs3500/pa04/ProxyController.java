@@ -122,9 +122,6 @@ public class ProxyController {
     height = arguments.get("height").asInt();
     width = arguments.get("width").asInt();
 
-    System.out.println(height);
-    System.out.println(width);
-
     Map<ShipType, Integer> shipSpecifications = parseShipSpecifications
         (arguments.get("fleet-spec"));
     List<Ship> shipPlacements = player.setup(height, width, shipSpecifications);
@@ -137,7 +134,6 @@ public class ProxyController {
     JsonNode jsonResponse = JsonUtils.serializeRecord(fleet);
     MessageJson messageJson = new MessageJson("setup", jsonResponse);
     JsonNode output = JsonUtils.serializeRecord(messageJson);
-    drawBoard(System.out, player.getPlayerBoard());
     this.out.println(output);
   }
 
@@ -171,30 +167,13 @@ public class ProxyController {
    */
   private void handleDamage(JsonNode arguments) {
     List<Coord> opponentShots = volleyParser(arguments);
-    for (Coord c : opponentShots) {
-      System.out.println(c.toString());
-    }
-
-    System.out.println(height);
-    System.out.println(width);
-
-    drawBoard(System.out, player.getPlayerBoard());
     List<Coord> hits = player.reportDamage(opponentShots);
-
     player.generateBoard(player.getShips(), opponentShots, hits, height, width);
-    drawBoard(System.out, player.getPlayerBoard());
-
-    for (Coord c : hits) {
-      System.out.println(c);
-    }
-
     List<CoordJson> coordJsons = createCoordJsons(hits);
-
     Volley damaged = new Volley(coordJsons);
     JsonNode response = JsonUtils.serializeRecord(damaged);
     MessageJson message = new MessageJson("report-damage", response);
     JsonNode output = JsonUtils.serializeRecord(message);
-    drawBoard(System.out, player.getPlayerBoard());
     out.println(output);
   }
 
