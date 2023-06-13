@@ -104,6 +104,7 @@ public class ProxyController {
     Map<ShipType, Integer> shipSpecifications = parseShipSpecifications(arguments.get("fleet-spec"));
     List<Ship> shipPlacements = player.setup(height, width, shipSpecifications);
     player.generateBoard(shipPlacements, new ArrayList<>(), new ArrayList<>(), height, width);
+    player.generateOppBoard(new ArrayList<>(), new ArrayList<>(), height, width);
 
     List<ShipJson> response = createShipPlacementsResponse(shipPlacements);
     Fleet fleet = new Fleet(response);
@@ -179,7 +180,9 @@ public class ProxyController {
 
   private void handleSuccessful(JsonNode arguments) {
     List<Coord> successful_shots = volleyParser(arguments);
-    // player.successfulHits(successful_shots);
+
+
+    player.successfulHits(successful_shots);
 
     JsonNode jsonResponse = JsonNodeFactory.instance.objectNode();
     MessageJson message = new MessageJson("successful-hits", jsonResponse);
