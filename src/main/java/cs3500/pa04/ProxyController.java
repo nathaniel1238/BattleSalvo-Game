@@ -71,7 +71,7 @@ public class ProxyController {
    *
    * @param message the incoming message
    */
-  private void delegate(MessageJson message) {
+  public void delegate(MessageJson message) {
     String command = message.methodName();
     JsonNode arguments = message.args();
 
@@ -183,7 +183,6 @@ public class ProxyController {
    */
   private void handleShots() {
     List<Coord> shots = player.takeShots();
-
     List<CoordJson> coordJsons = createCoordJsons(shots);
     Volley shot = new Volley(coordJsons);
     JsonNode response = JsonUtils.serializeRecord(shot);
@@ -271,24 +270,5 @@ public class ProxyController {
     }
 
     return tempList;
-  }
-
-  /**
-   * Draws the player's board to the specified output.
-   *
-   * @param output the output to which the board will be drawn
-   * @param board the player's board representation
-   */
-  private void drawBoard(Appendable output, List<List<String>> board) {
-    try {
-      for (int i = 0; i < board.size(); i++) {
-        for (int k = 0; k < board.get(0).size(); k++) {
-          output.append(board.get(i).get(k)).append(" ");
-        }
-        output.append(System.lineSeparator());
-      }
-    } catch (IOException e) {
-      throw new IllegalStateException(e);
-    }
   }
 }
