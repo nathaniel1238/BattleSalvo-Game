@@ -36,8 +36,11 @@
 //    int max = 10;
 //    UserQuestions.displayFleet(output, max);
 //
-//    String expectedOutput = "Please enter a valid number of ships for each type in the order[Carrier, BattleShip, Destroyer, Submarine]\n" +
-//        "NOTE: Each shiptype has to have atleast one value and may not exceed the size " + max + "\n";
+//    String expectedOutput = "Please enter a valid number of
+//    ships for each type in the order[Carrier, BattleShip,
+//    Destroyer, Submarine]\n" +
+//        "NOTE: Each shiptype has to have atleast one value
+//        and may not exceed the size " + max + "\n";
 //
 //    assertEquals(expectedOutput, output.toString());
 //  }

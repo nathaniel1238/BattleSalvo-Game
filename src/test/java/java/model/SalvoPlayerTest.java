@@ -65,8 +65,10 @@
 //  }
 //
 //  /**
-//   * Tests the {@link SalvoPlayer#takeShots()} method to ensure that it throws an {@link IllegalArgumentException}
-//   * if the number of shots provided by the player exceeds the number of unsunken ships on their board.
+//   * Tests the {@link SalvoPlayer#takeShots()} method
+//   to ensure that it throws an {@link IllegalArgumentException}
+//   * if the number of shots provided by the player
+//   exceeds the number of unsunken ships on their board.
 //   */
 //  @Test
 //  public void testTakeShotsExceedingShips() {
@@ -85,7 +87,8 @@
 //  }
 //
 //  /**
-//   * Tests the {@link SalvoPlayer#takeShots()} method to ensure that it handles multiple lines of input correctly.
+//   * Tests the {@link SalvoPlayer#takeShots()} method to
+//   ensure that it handles multiple lines of input correctly.
 //   */
 //  @Test
 //  public void testTakeShotsMultipleLines() {

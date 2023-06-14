@@ -38,7 +38,7 @@ public class Driver {
    * @throws IOException if an I/O error occurs during the game initialization
    */
   public static void main(String[] args) throws IOException {
-    if (args == null) {
+    if (args.length == 0) {
       Appendable output = System.out;
       SalvoGame game = new SalvoGame(new InputStreamReader(System.in), output);
       game.run();

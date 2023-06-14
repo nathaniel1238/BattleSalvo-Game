@@ -1,179 +1,211 @@
-//package Model;
+//package java.model;
 //
-//import Model.Coord;
-//import Model.Ship;
-//import Controller.ShipType;
+//import cs3500.cs3500.pa03.model.AIPlayer;
+//import cs3500.cs3500.pa03.model.AbstractPlayer;
+//import cs3500.cs3500.pa03.model.Direction;
+//import cs3500.cs3500.pa03.model.SalvoPlayer;
+//import cs3500.pa04.Coord;
+//import cs3500.pa04.GameResult;
+//import cs3500.pa04.Ship;
+//import cs3500.pa04.ShipType;
 //import java.io.ByteArrayOutputStream;
 //import java.io.PrintStream;
+//import java.util.ArrayList;
 //import org.junit.jupiter.api.Test;
-//
-//import java.util.*;
-//
+//import java.util.Arrays;
+//import java.util.HashMap;
+//import java.util.List;
+//import java.util.Map;
 //import static org.junit.jupiter.api.Assertions.assertEquals;
 //import static org.junit.jupiter.api.Assertions.assertTrue;
 //
-//public class AbstractPlayerTest {
+//class AbstractPlayerTest {
 //
-//  /**
-//   * Tests the setup(int, int, Map) method to ensure that it returns a list of ships
-//   * with valid locations on the board.
-//   */
 //  @Test
-//  public void testSetup() {
-//    AbstractPlayer player = new AbstractPlayerTestImpl();
-//
+//  void testSetup() {
+//    AbstractPlayer player = new SalvoPlayer();
 //    int height = 10;
 //    int width = 10;
 //    Map<ShipType, Integer> specifications = new HashMap<>();
-//    specifications.put(ShipType.DESTROYER, 2);
 //    specifications.put(ShipType.CARRIER, 1);
+//    specifications.put(ShipType.BATTLESHIP, 2);
 //
 //    List<Ship> ships = player.setup(height, width, specifications);
+//    List<Ship> player_ships = player.getShips();
 //
-//    assertEquals(3, ships.size()); // Should return 3 ships in total
-//    assertTrue(areShipsValid(ships, height, width)); // Check if the ship coordinates are valid
+//    // Assertions
+//    assertEquals(3, ships.size());
+//    assertEquals(player_ships.size(), ships.size());
 //  }
 //
-//  /**
-//   * Tests the reportDamage(List) method to ensure that it returns a filtered
-//   * list of shot coordinates that hit a ship on the player's board.
-//   */
+//
 //  @Test
-//  public void testReportDamage() {
-//    AbstractPlayer player = new AbstractPlayerTestImpl();
-//
-//    List<List<String>> playerBoard = createEmptyBoard(8, 8);
-//    List<Coord> opponentShots = new ArrayList<>();
-//    opponentShots.add(new Coord(2, 3));
-//    opponentShots.add(new Coord(4, 5));
-//
-//    player.generateBoard(new ArrayList<>(), new ArrayList<>(), opponentShots, 8, 8);
-//
+//  void testReportDamage() {
+//    AbstractPlayer player = new SalvoPlayer();
+//    List<Coord> coords1 = Arrays.asList(new Coord(0, 0), new Coord(1, 0),
+//        new Coord(2, 0), new Coord(3, 0), new Coord(4, 0), new Coord(5, 0));
+//    List<Coord> coords2 = Arrays.asList(new Coord(0, 1), new Coord(1, 1),
+//        new Coord(2, 1), new Coord(3, 1), new Coord(4, 1));
+//    List<Coord> coords3 = Arrays.asList(new Coord(0, 2), new Coord(1, 2),
+//        new Coord(2, 2), new Coord(3, 2));
+//    List<Coord> coords4 = Arrays.asList(new Coord(0, 3), new Coord(1, 3),
+//        new Coord(2, 3));
+//    List<Ship> ships = new ArrayList<>();
+//    ships.add(new Ship(ShipType.CARRIER, coords1, Direction.HORIZONTAL));
+//    ships.add(new Ship(ShipType.BATTLESHIP, coords2, Direction.HORIZONTAL));
+//    ships.add(new Ship(ShipType.DESTROYER, coords3, Direction.HORIZONTAL));
+//    ships.add(new Ship(ShipType.SUBMARINE, coords4, Direction.HORIZONTAL));
+//    List<Coord> opponentShots = Arrays.asList(
+//        new Coord(0, 0),
+//        new Coord(1, 0),
+//        new Coord(0, 1),
+//        new Coord(2, 2),
+//        new Coord(5, 5)
+//    );
+//    player.generateBoard(ships, new ArrayList<>(), new ArrayList<>(), 6, 6);
 //    List<Coord> hitCoordinates = player.reportDamage(opponentShots);
+//    player.generateBoard(ships, opponentShots, hitCoordinates, 6, 6);
 //
-//    assertEquals(2, hitCoordinates.size()); // Both shots should hit a ship
-//    assertTrue(areCoordinatesValid(hitCoordinates, 8, 8));
-// Check if the hit coordinates are valid
+//    assertTrue(hitCoordinates.contains(new Coord(0, 0)));
+//    assertTrue(hitCoordinates.contains(new Coord(1, 0)));
+//    assertTrue(hitCoordinates.contains(new Coord(0, 1)));
+//    assertTrue(hitCoordinates.contains(new Coord(2, 2)));
+//    assertTrue(!hitCoordinates.contains(new Coord(5, 25)));
+//    assertEquals(4, hitCoordinates.size());
+//
+//
 //  }
-//
-//  /**
-//   * Tests the successfulHits(List) method to ensure that it marks the
-//   * successfully hit shots on the opponent's board.
-//   */
 //  @Test
-//  public void testSuccessfulHits() {
-//    AbstractPlayer player = new AbstractPlayerTestImpl();
+//  void testSuccessfulHits() {
+//    AbstractPlayer player = new SalvoPlayer();
+//    List<Coord> coords1 = Arrays.asList(new Coord(0, 0), new Coord(1, 0),
+//        new Coord(2, 0), new Coord(3, 0), new Coord(4, 0), new Coord(5, 0));
+//    List<Coord> coords2 = Arrays.asList(new Coord(0, 1), new Coord(1, 1),
+//        new Coord(2, 1), new Coord(3, 1), new Coord(4, 1));
+//    List<Coord> coords3 = Arrays.asList(new Coord(0, 2), new Coord(1, 2),
+//        new Coord(2, 2), new Coord(3, 2));
+//    List<Coord> coords4 = Arrays.asList(new Coord(0, 3), new Coord(1, 3),
+//        new Coord(2, 3));
+//    List<Ship> ships = new ArrayList<>();
+//    ships.add(new Ship(ShipType.CARRIER, coords1, Direction.HORIZONTAL));
+//    ships.add(new Ship(ShipType.BATTLESHIP, coords2, Direction.HORIZONTAL));
+//    ships.add(new Ship(ShipType.DESTROYER, coords3, Direction.HORIZONTAL));
+//    ships.add(new Ship(ShipType.SUBMARINE, coords4, Direction.HORIZONTAL));
 //
-//    List<List<String>> opponentBoard = createEmptyBoard(8, 8);
-//    List<Coord> shotsThatHitOpponentShips = new ArrayList<>();
-//    shotsThatHitOpponentShips.add(new Coord(2, 3));
-//    shotsThatHitOpponentShips.add(new Coord(4, 5));
+//    AbstractPlayer player2 = new AIPlayer();
+//    List<Coord> coords5 = Arrays.asList(new Coord(0, 0), new Coord(1, 0),
+//        new Coord(2, 0), new Coord(3, 0), new Coord(4, 0), new Coord(5, 0));
+//    List<Coord> coords6 = Arrays.asList(new Coord(0, 1), new Coord(1, 1),
+//        new Coord(2, 1), new Coord(3, 1), new Coord(4, 1));
+//    List<Coord> coords7 = Arrays.asList(new Coord(0, 2), new Coord(1, 2),
+//        new Coord(2, 2), new Coord(3, 2));
+//    List<Coord> coords8 = Arrays.asList(new Coord(0, 3), new Coord(1, 3),
+//        new Coord(2, 3));
+//    List<Ship> ships2 = new ArrayList<>();
+//    ships2.add(new Ship(ShipType.CARRIER, coords1, Direction.HORIZONTAL));
+//    ships2.add(new Ship(ShipType.BATTLESHIP, coords2, Direction.HORIZONTAL));
+//    ships2.add(new Ship(ShipType.DESTROYER, coords3, Direction.HORIZONTAL));
+//    ships2.add(new Ship(ShipType.SUBMARINE, coords4, Direction.HORIZONTAL));
+//    List<Coord> aiShots = Arrays.asList(
+//        new Coord(0, 0),
+//        new Coord(1, 0),
+//        new Coord(5, 5));
+//    List<Coord> playerShots = Arrays.asList(
+//        new Coord(0, 0),
+//        new Coord(5, 5),
+//        new Coord(2, 2));
 //
-//    player.successfulHits(shotsThatHitOpponentShips);
+//    player.generateBoard(ships, new ArrayList<>(), new ArrayList<>(), 6, 6);
+//    player2.generateBoard(ships2, new ArrayList<>(), new ArrayList<>(), 6, 6);
+//    player.generateOppBoard(new ArrayList<>(), new ArrayList<>(), 6, 6);
+//    List<Coord> hitCoordinates1 = player2.reportDamage(playerShots);
+//    List<Coord> hitCoordinates2 = player.reportDamage(aiShots);
+//    player.successfulHits(hitCoordinates1);
+//    List<List<String>> oppboard = player.getOpponentBoard();
+//    List<List<String>> player_board = player.getPlayerBoard();
+//    player.generateBoard(ships, aiShots, hitCoordinates2, 6, 6);
+//    player.generateOppBoard(playerShots, hitCoordinates1, 6, 6);
 //
-//    assertEquals("X", opponentBoard.get(3).get(2)); // The shot (2, 3) should be marked as hit
-//    assertEquals("X", opponentBoard.get(5).get(4)); // The shot (4, 5) should be marked as hit
+//    assertEquals("X", oppboard.get(0).get(0));
+//    assertEquals("X", oppboard.get(2).get(2));
+//    assertEquals("O", oppboard.get(5).get(5));
+//    assertEquals("O", player_board.get(5).get(5));
 //  }
 //
-//  /**
-//   * Tests the endGame(GameResult, String)} method to ensure that it prints
-//   * the correct end game message based on the result and reason.
-//   */
 //  @Test
-//  public void testEndGame() {
-//    AbstractPlayer player = new AbstractPlayerTestImpl();
+//  void testCount() {
+//    AbstractPlayer player = new SalvoPlayer();
+//    List<Coord> coords3 = Arrays.asList(new Coord(0, 2), new Coord(1, 2),
+//        new Coord(2, 2), new Coord(3, 2));
+//    List<Coord> coords4 = Arrays.asList(new Coord(0, 3), new Coord(1, 3),
+//        new Coord(2, 3));
+//    List<Ship> ships = new ArrayList<>();
+//    ships.add(new Ship(ShipType.DESTROYER, coords3, Direction.HORIZONTAL));
+//    ships.add(new Ship(ShipType.SUBMARINE, coords4, Direction.HORIZONTAL));
 //
-//    // Capture console output for testing
-//    ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
-//    PrintStream printStream = new PrintStream(outputStream);
-//    PrintStream originalPrintStream = System.out;
-//    System.setOut(printStream);
-//
-//    player.endGame(GameResult.WIN, "Congratulations, it's ");
-//
-//    String output = outputStream.toString().trim();
-//    assertEquals("Congratulations, it's a win! You hit all
-//    their ships before they hit all yours!", output);
-//
-//    // Restore original print stream
-//    System.setOut(originalPrintStream);
+//    List<Coord> opponentShots = Arrays.asList(
+//        new Coord(0, 2),
+//        new Coord(1, 2),
+//        new Coord(3, 2),
+//        new Coord(2, 2),
+//        new Coord(5, 5)
+//    );
+//    player.generateBoard(ships, new ArrayList<>(), new ArrayList<>(), 6, 6);
+//    List<Coord> hitCoordinates = player.reportDamage(opponentShots);
+//    player.generateBoard(ships, opponentShots, hitCoordinates, 6, 6);
+//    List<List<String>> board = player.getPlayerBoard();
+//    int c = player.count(ships, board);
+//    assertEquals(c, 1);
 //  }
 //
-//  /**
-//   * Creates an empty game board with the specified dimensions.
-//   *
-//   * @param height the height of the board
-//   * @param width  the width of the board
-//   * @return the empty game board
-//   */
-//  private List<List<String>> createEmptyBoard(int height, int width) {
-//    List<List<String>> board = new ArrayList<>();
-//    for (int i = 0; i < height; i++) {
-//      List<String> row = new ArrayList<>();
-//      for (int j = 0; j < width; j++) {
-//        row.add("");
-//      }
-//      board.add(row);
-//    }
-//    return board;
+//  @Test
+//  void testEndGame() {
+//    // Create an instance of your player
+//    AbstractPlayer player = new SalvoPlayer();
+//// Test case 1: Player wins
+//    ByteArrayOutputStream outputStream1 = new ByteArrayOutputStream();
+//    PrintStream printStream1 = new PrintStream(outputStream1);
+//    PrintStream originalOut1 = System.out;
+//    System.setOut(printStream1);
+//    player.endGame(GameResult.WIN, "You sunk all opponent's ships!");
+//    String expectedOutput1 = "You sunk all opponent's ships! Congrats!";
+//    String capturedOutput1 = outputStream1.toString().trim();
+//    assertEquals(expectedOutput1, capturedOutput1);
+//    System.setOut(originalOut1);
+//
+//    // Test case 2: Player loses
+//    ByteArrayOutputStream outputStream2 = new ByteArrayOutputStream();
+//    PrintStream printStream2 = new PrintStream(outputStream2);
+//    PrintStream originalOut2 = System.out;
+//    System.setOut(printStream2);
+//    player.endGame(GameResult.LOSE, "All your ships are sunk!");
+//    String expectedOutput2 = "All your ships are sunk! Try again!";
+//    String capturedOutput2 = outputStream2.toString().trim();
+//    assertEquals(expectedOutput2, capturedOutput2);
+//    System.setOut(originalOut2);
+//
+//    // Test case 3: Game ends in a draw
+//    ByteArrayOutputStream outputStream3 = new ByteArrayOutputStream();
+//    PrintStream printStream3 = new PrintStream(outputStream3);
+//    PrintStream originalOut3 = System.out;
+//    System.setOut(printStream3);
+//    player.endGame(GameResult.DRAW, "The game is a draw!");
+//    String expectedOutput3 = "The game is a draw! So close!";
+//    String capturedOutput3 = outputStream3.toString().trim();
+//    assertEquals(expectedOutput3, capturedOutput3);
+//    System.setOut(originalOut3);
 //  }
 //
-//  /**
-//   * Checks if the ship coordinates are valid within the given board dimensions.
-//   *
-//   * @param ships  the list of ships
-//   * @param height the height of the board
-//   * @param width  the width of the board
-//   * @return true if the ship coordinates are valid, false otherwise
-//   */
-//  private boolean areShipsValid(List<Ship> ships, int height, int width) {
-//    for (Ship ship : ships) {
-//      for (Coord coord : ship.getCoord()) {
-//        int x = coord.getX();
-//        int y = coord.getY();
-//        if (x < 0 || x >= width || y < 0 || y >= height) {
-//          return false;
-//        }
-//      }
-//    }
-//    return true;
+//  @Test
+//  void testName() {
+//    String name = "kevandnat";
+//    AbstractPlayer player = new SalvoPlayer();
+//    String player_name = player.name();
+//    assertEquals(name, player_name);
+//
 //  }
 //
-//  /**
-//   * Checks if the shot coordinates are valid within the given board dimensions.
-//   *
-//   * @param coordinates the shot coordinates
-//   * @param height      the height of the board
-//   * @param width       the width of the board
-//   * @return true if the coordinates are valid, false otherwise
-//   */
-//  private boolean areCoordinatesValid(List<Coord> coordinates, int height, int width) {
-//    for (Coord coord : coordinates) {
-//      int x = coord.getX();
-//      int y = coord.getY();
-//      if (x < 0 || x >= width || y < 0 || y >= height) {
-//        return false;
-//      }
-//    }
-//    return true;
-//  }
 //
-//  /**
-//   * An implementation of AbstractPlayer for testing purposes.
-//   */
-//  private static class AbstractPlayerTestImpl extends AbstractPlayer {
-//    public AbstractPlayerTestImpl() {
-//      super(new ArrayList<>(), new ArrayList<>());
-//    }
 //
-//    @Override
-//    public String name() {
-//      return null;
-//    }
 //
-//    @Override
-//    public List<Coord> takeShots() {
-//      return null;
-//    }
-//  }
 //}

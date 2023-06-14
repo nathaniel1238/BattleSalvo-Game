@@ -251,7 +251,8 @@
 //   * @return a MessageJson for the object
 //   */
 //  private JsonNode createSampleMessage(String methodName, Record messageObject) {
-//    MessageJson messageJson = new MessageJson(methodName, JsonUtils.serializeRecord(messageObject));
+//    MessageJson messageJson =
+//    new MessageJson(methodName, JsonUtils.serializeRecord(messageObject));
 //    return JsonUtils.serializeRecord(messageJson);
 //  }
 //}

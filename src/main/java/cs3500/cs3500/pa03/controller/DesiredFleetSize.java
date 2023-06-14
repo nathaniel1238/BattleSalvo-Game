@@ -71,7 +71,7 @@ public class DesiredFleetSize {
    *
    * @return the sum of all the values
    */
-  private int sum(int v1, int v2, int v3, int v4) {
+  public int sum(int v1, int v2, int v3, int v4) {
     if ((v1 != 0 && v2 != 0 && v3 != 0 && v4 != 0)) {
       return v1 + v2 + v3 + v4;
     } else {
