@@ -52,7 +52,8 @@
 //    List<Coord> hitCoordinates = player.reportDamage(opponentShots);
 //
 //    assertEquals(2, hitCoordinates.size()); // Both shots should hit a ship
-//    assertTrue(areCoordinatesValid(hitCoordinates, 8, 8)); // Check if the hit coordinates are valid
+//    assertTrue(areCoordinatesValid(hitCoordinates, 8, 8));
+// Check if the hit coordinates are valid
 //  }
 //
 //  /**
@@ -91,7 +92,8 @@
 //    player.endGame(GameResult.WIN, "Congratulations, it's ");
 //
 //    String output = outputStream.toString().trim();
-//    assertEquals("Congratulations, it's a win! You hit all their ships before they hit all yours!", output);
+//    assertEquals("Congratulations, it's a win! You hit all
+//    their ships before they hit all yours!", output);
 //
 //    // Restore original print stream
 //    System.setOut(originalPrintStream);
